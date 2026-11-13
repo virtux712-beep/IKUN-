@@ -1,6 +1,8 @@
 import { Check, Copy, Download, Eye, Heart, Search, X } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAchievements } from '@/achievements'
+import SectionHeader from '@/components/SectionHeader'
 import { useToast } from '@/components/Toast'
 import { memeCategories, memes } from '@/data/memes'
 import { getMemeCollection, toggleMemeCollection } from '@/store'
@@ -8,26 +10,37 @@ import type { Meme } from '@/types'
 
 export default function MemeCenter() {
   const toast = useToast()
+  const { record } = useAchievements()
   const [activeCategory, setActiveCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [onlyFav, setOnlyFav] = useState(false)
   const [collection, setCollection] = useState<string[]>(getMemeCollection)
   const [previewMeme, setPreviewMeme] = useState<Meme | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
+  /* ---------------- 分类计数 ---------------- */
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { all: memes.length }
+    for (const m of memes) map[m.category] = (map[m.category] ?? 0) + 1
+    return map
+  }, [])
+
+  /* ---------------- 过滤 ---------------- */
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase()
     return memes.filter((m) => {
-      const matchCategory = activeCategory === 'all' || m.category === activeCategory
-      const matchSearch =
-        !q ||
+      if (onlyFav && !collection.includes(m.id)) return false
+      if (activeCategory !== 'all' && m.category !== activeCategory) return false
+      if (!q) return true
+      return (
         m.name.toLowerCase().includes(q) ||
         m.description.toLowerCase().includes(q) ||
         m.tags.some((t) => t.toLowerCase().includes(q))
-      return matchCategory && matchSearch
+      )
     })
-  }, [activeCategory, searchTerm])
+  }, [searchTerm, activeCategory, onlyFav, collection])
 
-  // 预览弹层支持 Esc 关闭
+  /* ---------------- 预览弹层 Esc ---------------- */
   useEffect(() => {
     if (!previewMeme) return
     const onKey = (e: KeyboardEvent) => {
@@ -37,9 +50,10 @@ export default function MemeCenter() {
     return () => window.removeEventListener('keydown', onKey)
   }, [previewMeme])
 
+  /* ---------------- 操作 ---------------- */
   const handleCopy = useCallback(
     async (meme: Meme) => {
-      const text = `${meme.emoji} ${meme.name}`
+      const text = meme.emoji + ' ' + meme.name
       try {
         if (navigator.clipboard?.writeText) {
           await navigator.clipboard.writeText(text)
@@ -54,7 +68,7 @@ export default function MemeCenter() {
           document.body.removeChild(textarea)
         }
         setCopiedId(meme.id)
-        toast.success(`已复制：${text}`)
+        toast.success('已复制：' + text)
         setTimeout(() => setCopiedId(null), 1800)
       } catch {
         toast.error('复制失败，请长按手动复制')
@@ -67,38 +81,38 @@ export default function MemeCenter() {
     (meme: Meme) => {
       const canvas = document.createElement('canvas')
       canvas.width = 600
-      canvas.height = 450
+      canvas.height = 600
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
-      const gradient = ctx.createLinearGradient(0, 0, 600, 450)
-      gradient.addColorStop(0, '#1a1a2e')
-      gradient.addColorStop(1, '#16213e')
+      const gradient = ctx.createLinearGradient(0, 0, 600, 600)
+      gradient.addColorStop(0, '#141414')
+      gradient.addColorStop(1, '#2a2410')
       ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, 600, 450)
+      ctx.fillRect(0, 0, 600, 600)
 
-      ctx.strokeStyle = 'rgba(255,215,0,0.25)'
-      ctx.lineWidth = 3
-      ctx.strokeRect(14, 14, 572, 422)
+      ctx.strokeStyle = 'rgba(255,215,0,0.3)'
+      ctx.lineWidth = 4
+      ctx.strokeRect(20, 20, 560, 560)
 
       ctx.textAlign = 'center'
-      ctx.font = '130px "Segoe UI Emoji", "Apple Color Emoji", serif'
-      ctx.fillText(meme.emoji, 300, 200)
+      ctx.font = '180px "Segoe UI Emoji", "Apple Color Emoji", serif'
+      ctx.fillText(meme.emoji, 300, 260)
 
-      ctx.font = 'bold 40px "PingFang SC", "Microsoft YaHei", sans-serif'
+      ctx.font = 'bold 44px "PingFang SC", "Microsoft YaHei", sans-serif'
       ctx.fillStyle = '#FFD700'
-      ctx.fillText(meme.name, 300, 285)
+      ctx.fillText(meme.name, 300, 370, 500)
 
-      ctx.font = '20px "PingFang SC", "Microsoft YaHei", sans-serif'
+      ctx.font = '22px "PingFang SC", "Microsoft YaHei", sans-serif'
       ctx.fillStyle = '#9a9a9a'
-      ctx.fillText(meme.description, 300, 335)
+      ctx.fillText(meme.description, 300, 425, 500)
 
-      ctx.font = '14px "PingFang SC", "Microsoft YaHei", sans-serif'
+      ctx.font = '16px "PingFang SC", "Microsoft YaHei", sans-serif'
       ctx.fillStyle = '#4a4a4a'
-      ctx.fillText('🐔 IKUN之家 · ikun-home', 300, 405)
+      ctx.fillText('🐔 IKUN之家 · ikun-home', 300, 530)
 
       const link = document.createElement('a')
-      link.download = `ikun-meme-${meme.id}.png`
+      link.download = 'ikun-meme-' + meme.id + '.png'
       link.href = canvas.toDataURL('image/png')
       link.click()
       toast.success('表情包已下载')
@@ -110,126 +124,183 @@ export default function MemeCenter() {
     (id: string) => {
       const next = toggleMemeCollection(id)
       setCollection(next)
+      record({ type: 'meme', count: next.length })
       toast.success(next.includes(id) ? '已加入收藏' : '已取消收藏')
     },
-    [toast],
+    [toast, record],
   )
 
   const isFav = (id: string) => collection.includes(id)
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            😱 <span className="text-ikun-yellow">表情包</span>中心
-          </h1>
-          <p className="text-gray-400">海量 ikun 专属表情包，一键复制使用</p>
-          <p className="text-sm text-gray-500 mt-2">
-            已收藏 <span className="text-ikun-yellow tabular-nums">{collection.length}</span> 个
-          </p>
-        </div>
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-page">
+        <SectionHeader
+          index="04"
+          eyebrow="表情包中心"
+          title="一句一个梗，存满整个相册"
+          description={
+            '共 ' +
+            memes.length +
+            ' 个 ikun 专属表情包，覆盖经典、反应、舞蹈、篮球、文字、组合六大分类。一键复制、导出 PNG，也能加入收藏慢慢用。'
+          }
+          className="mb-10"
+        />
 
-        {/* 搜索 + 分类 */}
-        <div className="glass rounded-2xl p-4 mb-8">
-          <div className="relative mb-4">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              aria-hidden="true"
-            />
-            <input
-              type="search"
-              placeholder="搜索表情包..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label="搜索表情包"
-              className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-ikun-yellow/50 transition-colors"
-            />
-          </div>
-          <fieldset className="flex flex-wrap gap-2 border-0 p-0 m-0 min-w-0">
-            <legend className="sr-only">表情包分类</legend>
-            {memeCategories.map((cat) => (
+        {/* 工具栏：吸顶 */}
+        <div className="sticky top-16 z-30 py-3 mb-6 bg-ikun-black/85 backdrop-blur-xl border-b border-white/5">
+          <div>
+            <div className="relative mb-3">
+              <Search
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                placeholder="搜索表情包名称、描述或标签…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="搜索表情包"
+                className="w-full pl-11 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-ikun-yellow/50 focus:bg-white/[0.07] transition-colors"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-gray-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  aria-label="清空搜索"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
               <button
                 type="button"
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                aria-pressed={activeCategory === cat.id}
+                onClick={() => setOnlyFav((v) => !v)}
+                aria-pressed={onlyFav}
                 className={
-                  'px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ' +
-                  (activeCategory === cat.id
-                    ? 'bg-ikun-yellow text-black'
-                    : 'bg-white/5 text-gray-400 hover:bg-white/10')
+                  'shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ' +
+                  (onlyFav
+                    ? 'bg-red-500/20 text-red-300 border-red-400/30'
+                    : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10')
                 }
               >
-                <span aria-hidden="true">{cat.emoji}</span> {cat.label}
+                <Heart size={12} fill={onlyFav ? 'currentColor' : 'none'} aria-hidden="true" />
+                收藏 {collection.length}
               </button>
-            ))}
-          </fieldset>
+
+              <span className="w-px h-5 bg-white/10 shrink-0" aria-hidden="true" />
+
+              {memeCategories.map((cat) => (
+                <button
+                  type="button"
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  aria-pressed={activeCategory === cat.id}
+                  className={
+                    'shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ' +
+                    (activeCategory === cat.id
+                      ? 'bg-ikun-yellow/20 text-ikun-yellow border-ikun-yellow/30'
+                      : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10')
+                  }
+                >
+                  <span aria-hidden="true">{cat.emoji}</span>
+                  {cat.label}
+                  <span className="tabular-nums opacity-50">{counts[cat.id] ?? 0}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* 列表 */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {/* 结果统计 */}
+        <p className="text-xs text-gray-500 mb-4 tabular-nums">
+          共 <span className="text-ikun-yellow font-bold">{filtered.length}</span> 个结果
+          {onlyFav && ' · 仅显示收藏'}
+        </p>
+
+        {/* 卡片网格 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {filtered.map((meme) => (
             <article
               key={meme.id}
-              className="glass rounded-2xl p-4 transition-all duration-300 hover:bg-white/10 hover:-translate-y-0.5 group"
+              className={
+                'card group overflow-hidden flex flex-col ' +
+                (isFav(meme.id) ? 'ring-1 ring-red-400/40' : '')
+              }
             >
               <button
                 type="button"
                 onClick={() => setPreviewMeme(meme)}
-                className="w-full text-center mb-3 cursor-pointer"
-                aria-label={`预览 ${meme.name}`}
+                className="flex-1 p-4 pb-3 text-center cursor-pointer"
+                aria-label={'预览 ' + meme.name}
               >
-                <span className="text-5xl inline-block transition-transform group-hover:scale-110">
-                  {meme.emoji}
-                </span>
-              </button>
-              <h2 className="font-bold text-white text-sm text-center mb-1 truncate">
-                {meme.name}
-              </h2>
-              <p className="text-xs text-gray-500 text-center mb-3 truncate">{meme.description}</p>
-              <div className="flex flex-wrap gap-1 mb-3 justify-center">
-                {meme.tags.slice(0, 2).map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 bg-white/5 rounded-full text-[10px] text-gray-400"
-                  >
-                    #{tag}
+                <div className="relative h-20 grid place-items-center mb-2">
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 50% 50%, rgba(255,215,0,0.16), transparent 70%)',
+                    }}
+                    aria-hidden="true"
+                  />
+                  <span className="relative text-5xl transition-transform duration-300 group-hover:scale-110">
+                    {meme.emoji}
                   </span>
-                ))}
-              </div>
-              <div className="flex gap-1.5 justify-center">
+                </div>
+
+                <h3 className="font-bold text-white text-sm mb-1 truncate">{meme.name}</h3>
+                <p className="text-[11px] leading-relaxed text-white/40 line-clamp-2 min-h-[2.4em]">
+                  {meme.description}
+                </p>
+
+                <div className="flex flex-wrap gap-1 justify-center mt-2">
+                  {meme.tags.slice(0, 2).map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-1.5 py-0.5 rounded bg-white/[0.06] text-[10px] text-white/40"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </button>
+
+              {/* 操作条 */}
+              <div className="grid grid-cols-4 border-t border-white/5">
                 <button
                   type="button"
                   onClick={() => setPreviewMeme(meme)}
-                  className="p-2 rounded-lg bg-white/5 hover:bg-blue-500/20 text-gray-400 hover:text-blue-400 transition-all cursor-pointer"
+                  className="flex flex-col items-center gap-0.5 py-2 text-[10px] text-gray-500 hover:text-blue-400 hover:bg-white/5 transition-colors cursor-pointer"
                   aria-label="预览"
-                  title="预览"
                 >
-                  <Eye size={14} />
+                  <Eye size={14} aria-hidden="true" />
+                  预览
                 </button>
                 <button
                   type="button"
                   onClick={() => handleCopy(meme)}
-                  className="p-2 rounded-lg bg-white/5 hover:bg-green-500/20 text-gray-400 hover:text-green-400 transition-all cursor-pointer"
+                  className="flex flex-col items-center gap-0.5 py-2 text-[10px] text-gray-500 hover:text-green-400 hover:bg-white/5 transition-colors cursor-pointer"
                   aria-label="复制"
-                  title="复制"
                 >
                   {copiedId === meme.id ? (
-                    <Check size={14} className="text-green-400" />
+                    <Check size={14} className="text-green-400" aria-hidden="true" />
                   ) : (
-                    <Copy size={14} />
+                    <Copy size={14} aria-hidden="true" />
                   )}
+                  复制
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDownload(meme)}
-                  className="p-2 rounded-lg bg-white/5 hover:bg-yellow-500/20 text-gray-400 hover:text-yellow-400 transition-all cursor-pointer"
+                  className="flex flex-col items-center gap-0.5 py-2 text-[10px] text-gray-500 hover:text-ikun-yellow hover:bg-white/5 transition-colors cursor-pointer"
                   aria-label="下载"
-                  title="下载"
                 >
-                  <Download size={14} />
+                  <Download size={14} aria-hidden="true" />
+                  下载
                 </button>
                 <button
                   type="button"
@@ -237,35 +308,44 @@ export default function MemeCenter() {
                   aria-label={isFav(meme.id) ? '取消收藏' : '收藏'}
                   aria-pressed={isFav(meme.id)}
                   className={
-                    'p-2 rounded-lg transition-all cursor-pointer ' +
-                    (isFav(meme.id)
-                      ? 'bg-red-500/20 text-red-400'
-                      : 'bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400')
+                    'flex flex-col items-center gap-0.5 py-2 text-[10px] transition-colors cursor-pointer hover:bg-white/5 ' +
+                    (isFav(meme.id) ? 'text-red-400' : 'text-gray-500 hover:text-red-400')
                   }
-                  title="收藏"
                 >
-                  <Heart size={14} fill={isFav(meme.id) ? 'currentColor' : 'none'} />
+                  <Heart
+                    size={14}
+                    fill={isFav(meme.id) ? 'currentColor' : 'none'}
+                    aria-hidden="true"
+                  />
+                  {isFav(meme.id) ? '已藏' : '收藏'}
                 </button>
               </div>
             </article>
           ))}
         </div>
 
+        {/* 空状态 */}
         {filtered.length === 0 && (
-          <div className="text-center py-20">
+          <div className="text-center py-24">
             <div className="text-6xl mb-4" aria-hidden="true">
-              🔍
+              {onlyFav ? '💔' : '🔍'}
             </div>
-            <p className="text-gray-400">没有找到匹配的表情包</p>
+            <p className="text-white/50 mb-1">
+              {onlyFav ? '还没有收藏任何表情包' : '没有找到匹配的表情包'}
+            </p>
+            <p className="text-xs text-gray-600 mb-6">
+              {onlyFav ? '点卡片底部的爱心就能收藏' : '试试换个关键词或分类'}
+            </p>
             <button
               type="button"
               onClick={() => {
                 setSearchTerm('')
                 setActiveCategory('all')
+                setOnlyFav(false)
               }}
-              className="mt-4 px-4 py-2 text-sm text-ikun-yellow hover:bg-ikun-yellow/10 rounded-lg transition-all cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-ikun-yellow/15 text-ikun-yellow text-sm font-bold hover:bg-ikun-yellow/25 transition-colors cursor-pointer"
             >
-              清除筛选
+              重置筛选
             </button>
           </div>
         )}
@@ -287,7 +367,7 @@ export default function MemeCenter() {
           >
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
             <m.div
-              className="relative glass rounded-3xl p-8 max-w-sm w-full text-center"
+              className="relative card rounded-3xl p-8 max-w-sm w-full text-center"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.94, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -321,7 +401,7 @@ export default function MemeCenter() {
                 <button
                   type="button"
                   onClick={() => handleCopy(previewMeme)}
-                  className="px-4 py-2 bg-ikun-yellow text-black rounded-xl font-bold text-sm hover:bg-ikun-gold transition-all cursor-pointer"
+                  className="px-4 py-2 bg-ikun-yellow text-black rounded-xl font-bold text-sm hover:brightness-110 transition-all cursor-pointer"
                 >
                   {copiedId === previewMeme.id ? '✅ 已复制' : '📋 复制'}
                 </button>

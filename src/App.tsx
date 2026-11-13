@@ -1,16 +1,23 @@
 import { Loader2 } from 'lucide-react'
 import { AnimatePresence, domAnimation, LazyMotion, m, useReducedMotion } from 'motion/react'
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AchievementProvider, useAchievements } from '@/achievements'
+import AchievementsPanel from '@/components/AchievementsPanel'
 import type { PaletteCommand } from '@/components/CommandPalette'
 import CommandPalette from '@/components/CommandPalette'
+import CursorTrail from '@/components/CursorTrail'
 import EasterEgg from '@/components/EasterEgg'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Footer from '@/components/Footer'
+import KunPet from '@/components/KunPet'
 import Navbar from '@/components/Navbar'
 import ParticleBackground from '@/components/ParticleBackground'
 import ScrollProgress from '@/components/ScrollProgress'
+import SettingsPanel from '@/components/SettingsPanel'
 import { ToastProvider, useToast } from '@/components/Toast'
 import { useClickCounter, useHotkey } from '@/hooks'
+import { useTypingCluck } from '@/hooks/useTypingCluck'
+import { SettingsProvider, useSettings } from '@/settings'
 import type { TabId } from '@/types'
 import { isTabId } from '@/types'
 
@@ -20,6 +27,8 @@ const Encyclopedia = lazy(() => import('@/pages/Encyclopedia'))
 const MemeCenter = lazy(() => import('@/pages/MemeCenter'))
 const MusicPlayer = lazy(() => import('@/pages/MusicPlayer'))
 const Games = lazy(() => import('@/pages/Games'))
+const Lab = lazy(() => import('@/pages/Lab'))
+const Sandbox = lazy(() => import('@/pages/Sandbox'))
 const MessageBoard = lazy(() => import('@/pages/MessageBoard'))
 const SearchPage = lazy(() => import('@/pages/Search'))
 
@@ -29,6 +38,8 @@ const NAV_META: Record<TabId, { emoji: string; label: string; hint: string }> = 
   memes: { emoji: '😱', label: '表情包', hint: '浏览表情包中心' },
   music: { emoji: '🎵', label: '音乐区', hint: '打开音乐播放器' },
   games: { emoji: '🎮', label: '小游戏', hint: '挑战小游戏与纯度测试' },
+  lab: { emoji: '🧪', label: '互动实验室', hint: '40 个纯前端互动项目' },
+  sandbox: { emoji: '🧲', label: '物理沙盒', hint: '拖动鸡和篮球的物理世界' },
   messages: { emoji: '💬', label: '留言墙', hint: '看看大家在说什么' },
   search: { emoji: '🔍', label: '搜索', hint: '搜索全站内容' },
 }
@@ -53,38 +64,68 @@ function AppShell() {
   const [activeTab, setActiveTab] = useState<TabId>(readTabFromHash)
   const [showEasterEgg, setShowEasterEgg] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [achOpen, setAchOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const toast = useToast()
   const reducedMotion = useReducedMotion()
+  const settings = useSettings()
+  const { record, unlocked } = useAchievements()
 
-  const navigate = useCallback((tab: TabId) => {
-    setActiveTab(tab)
-    if (window.location.hash !== `#/${tab}`) {
-      window.location.hash = `#/${tab}`
-    }
-    window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [])
+  // 打字鸡叫（设置里默认关闭）
+  useTypingCluck()
+
+  const navigate = useCallback(
+    (tab: TabId) => {
+      setActiveTab(tab)
+      if (window.location.hash !== `#/${tab}`) {
+        window.location.hash = `#/${tab}`
+      }
+      window.scrollTo({ top: 0, behavior: 'auto' })
+      record({ type: 'tab', tab })
+    },
+    [record],
+  )
 
   // 浏览器前进 / 后退
   useEffect(() => {
-    const onHashChange = () => setActiveTab(readTabFromHash())
+    const onHashChange = () => {
+      const tab = readTabFromHash()
+      setActiveTab(tab)
+      record({ type: 'tab', tab })
+    }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+  }, [record])
 
-  // 切换页面时同步文档标题，利于分享与无障碍
+  // 首次进入也算一次访问
+  useEffect(() => {
+    record({ type: 'tab', tab: readTabFromHash() })
+  }, [record])
+
+  // 切换页面时同步文档标题
   useEffect(() => {
     const meta = NAV_META[activeTab]
     document.title =
       activeTab === 'home' ? 'IKUN之家 · 小黑子的专属精神家园' : `${meta.label} · IKUN之家`
   }, [activeTab])
 
-  // 彩蛋一：连续点击 Logo 5 次
-  const triggerEasterEgg = useCallback(() => setShowEasterEgg(true), [])
+  // 主题切换成就
+  const themeRef = useRef(settings.theme)
+  useEffect(() => {
+    if (themeRef.current === settings.theme) return
+    themeRef.current = settings.theme
+    record({ type: 'theme' })
+  }, [settings.theme, record])
+
+  const triggerEasterEgg = useCallback(() => {
+    setShowEasterEgg(true)
+    record({ type: 'egg' })
+  }, [record])
   const handleLogoClick = useClickCounter(5, triggerEasterEgg)
   const hideEasterEgg = useCallback(() => setShowEasterEgg(false), [])
   const closePalette = useCallback(() => setPaletteOpen(false), [])
 
-  // 彩蛋二：键盘依次输入 ikun
+  // 彩蛋：键盘输入 ikun
   useEffect(() => {
     let buffer = ''
     const onKey = (e: KeyboardEvent) => {
@@ -96,16 +137,17 @@ function AppShell() {
       if (buffer.includes('ikun')) {
         buffer = ''
         setShowEasterEgg(true)
+        record({ type: 'egg' })
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [record])
 
-  // 全局快捷键：Ctrl/Cmd + K 打开命令面板
   useHotkey({ key: 'k', ctrlOrMeta: true }, (e) => {
     e.preventDefault()
     setPaletteOpen((open) => !open)
+    record({ type: 'palette' })
   })
 
   const commands = useMemo<PaletteCommand[]>(() => {
@@ -122,13 +164,31 @@ function AppShell() {
     return [
       ...navCommands,
       {
+        id: 'achievements',
+        label: '查看成就',
+        hint: `已解锁 ${unlocked.length} 个徽章`,
+        emoji: '🏆',
+        keywords: ['achievement', 'badge', '成就', '徽章'],
+        group: '趣味功能',
+        run: () => setAchOpen(true),
+      },
+      {
+        id: 'settings',
+        label: '打开设置',
+        hint: '主题 / 音效 / 特效',
+        emoji: '⚙️',
+        keywords: ['setting', 'theme', '设置', '主题'],
+        group: '趣味功能',
+        run: () => setSettingsOpen(true),
+      },
+      {
         id: 'easter-egg',
         label: '召唤彩蛋',
         hint: '鸡你太美！',
         emoji: '🎉',
         keywords: ['easter', 'egg', 'caidan', '彩蛋'],
         group: '趣味功能',
-        run: () => setShowEasterEgg(true),
+        run: triggerEasterEgg,
       },
       {
         id: 'copy-link',
@@ -145,7 +205,7 @@ function AppShell() {
         },
       },
     ]
-  }, [navigate, toast])
+  }, [navigate, toast, unlocked.length, triggerEasterEgg])
 
   const renderPage = () => {
     switch (activeTab) {
@@ -159,6 +219,10 @@ function AppShell() {
         return <MusicPlayer />
       case 'games':
         return <Games />
+      case 'lab':
+        return <Lab />
+      case 'sandbox':
+        return <Sandbox />
       case 'messages':
         return <MessageBoard />
       case 'search':
@@ -171,15 +235,10 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-ikun-black text-white font-sans">
       <ParticleBackground />
+      <CursorTrail />
+      <KunPet />
 
-      <div
-        className="fixed inset-0 pointer-events-none z-[1]"
-        aria-hidden="true"
-        style={{
-          background:
-            'radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(255,215,0,0.03) 0%, transparent 50%)',
-        }}
-      />
+      <div className="ambient" aria-hidden="true" />
 
       <a
         href="#main-content"
@@ -195,6 +254,9 @@ function AppShell() {
         onTabChange={navigate}
         onLogoClick={handleLogoClick}
         onOpenSearch={() => setPaletteOpen(true)}
+        onOpenAchievements={() => setAchOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
+        unlockedCount={unlocked.length}
       />
 
       <main id="main-content" className="relative z-10">
@@ -218,16 +280,21 @@ function AppShell() {
       <Footer onTabChange={navigate} />
 
       <EasterEgg show={showEasterEgg} onHide={hideEasterEgg} />
-
       <CommandPalette open={paletteOpen} onClose={closePalette} commands={commands} />
+      <AchievementsPanel open={achOpen} onClose={() => setAchOpen(false)} />
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AppShell />
-    </ToastProvider>
+    <SettingsProvider>
+      <ToastProvider>
+        <AchievementProvider>
+          <AppShell />
+        </AchievementProvider>
+      </ToastProvider>
+    </SettingsProvider>
   )
 }

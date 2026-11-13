@@ -64,7 +64,16 @@ export interface PurityResult {
 }
 
 /** 站点所有可导航的标签页 */
-export type TabId = 'home' | 'encyclopedia' | 'memes' | 'music' | 'games' | 'messages' | 'search'
+export type TabId =
+  | 'home'
+  | 'encyclopedia'
+  | 'memes'
+  | 'music'
+  | 'games'
+  | 'lab'
+  | 'sandbox'
+  | 'messages'
+  | 'search'
 
 export const TAB_IDS: readonly TabId[] = [
   'home',
@@ -72,6 +81,8 @@ export const TAB_IDS: readonly TabId[] = [
   'memes',
   'music',
   'games',
+  'lab',
+  'sandbox',
   'messages',
   'search',
 ] as const

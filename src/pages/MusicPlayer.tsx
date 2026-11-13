@@ -11,6 +11,8 @@ import {
   VolumeX,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useAchievements } from '@/achievements'
+import SectionHeader from '@/components/SectionHeader'
 import { useToast } from '@/components/Toast'
 import { playlist } from '@/data/music'
 import {
@@ -34,6 +36,7 @@ const formatTime = (totalSeconds: number): string => {
 
 export default function MusicPlayer() {
   const toast = useToast()
+  const { record } = useAchievements()
   const [index, setIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [elapsed, setElapsed] = useState(0)
@@ -118,21 +121,20 @@ export default function MusicPlayer() {
   const onToggleFavorite = (id: string) => {
     const next = toggleFavoriteSong(id)
     setFavorites(next)
+    record({ type: 'song', count: next.length })
     toast.success(next.includes(id) ? '已收藏到歌单' : '已取消收藏')
   }
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            🎵 <span className="text-ikun-yellow">音乐</span>播放器
-          </h1>
-          <p className="text-gray-400">聆听 ikun 专属 BGM</p>
-          <p className="text-xs text-gray-600 mt-2">
-            按空格键播放 / 暂停 · 曲目为氛围演示，不含真实音源
-          </p>
-        </div>
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-page">
+        <SectionHeader
+          index="10"
+          eyebrow="音乐播放器"
+          title="聆听 ikun 专属 BGM"
+          description="播放进度基于真实时间差推进，不会因掉帧漂移。空格键播放 / 暂停，进度条支持点击与左右方向键。曲目为氛围演示，不含真实音源。"
+          className="mb-12"
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 主播放器 */}

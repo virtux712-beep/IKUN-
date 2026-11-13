@@ -34,10 +34,14 @@
   --nav-height: 4rem;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* 全局重置必须放在 base 层内：写在层外会压过 utilities 层的 padding / margin 工具类
+   （曾导致全站内边距工具类失效、图鉴搜索框图标压字，v2.0.2 修复） */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 html {
@@ -500,4 +504,301 @@ input[type="range"]::-moz-range-thumb {
 /* sonner 提示条：与站点玻璃风格对齐 */
 [data-sonner-toaster] {
   font-family: var(--font-sans);
+}
+/* ---------------------------------------------------------------- */
+/* 互动实验室：弹幕                                                      */
+/* ---------------------------------------------------------------- */
+@keyframes danmaku-move {
+  from {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-110%);
+    opacity: 0;
+  }
+}
+/* ---------------------------------------------------------------- */
+/* 主题换肤：覆盖 Tailwind @theme 生成的颜色变量                       */
+/* ---------------------------------------------------------------- */
+html[data-theme='sakura'] {
+  --color-ikun-yellow: #ff7eb6;
+  --color-ikun-gold: #ff9ec8;
+  --color-ikun-golden: #e56aa0;
+}
+
+html[data-theme='mint'] {
+  --color-ikun-yellow: #3ddc97;
+  --color-ikun-gold: #6fe7b8;
+  --color-ikun-golden: #22a97b;
+}
+
+html[data-theme='violet'] {
+  --color-ikun-yellow: #a78bfa;
+  --color-ikun-gold: #c4b5fd;
+  --color-ikun-golden: #7c3aed;
+}
+
+html[data-theme='ocean'] {
+  --color-ikun-yellow: #38bdf8;
+  --color-ikun-gold: #7dd3fc;
+  --color-ikun-golden: #0284c7;
+}
+
+/* 换肤时的平滑过渡（不影响布局） */
+body {
+  transition: background-color 0.3s ease;
+}
+
+/* 卡片跟随鼠标的高光（配合 TiltCard 的 --spot-x / --spot-y） */
+.tilt-spot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(255, 255, 255, 0.12),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.tilt-spot:hover::after {
+  opacity: 1;
+}
+/* ---------------------------------------------------------------- */
+/* v2.3 视觉语言升级：氛围色 / 卡片 / 徽章 / 章节标题                   */
+/* ---------------------------------------------------------------- */
+:root {
+  --ambient-violet: 124, 92, 255;
+  --ambient-rose: 214, 122, 168;
+}
+
+/* 精致的卡片：更柔和的边框 + 极淡的竖向渐变 */
+.card {
+  position: relative;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.018) 100%);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 215, 0, 0.22);
+  box-shadow: 0 18px 44px -22px rgba(0, 0, 0, 0.9);
+}
+
+/* 金色胶囊徽章（参考设计稿的「镇馆之宝」标签） */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ffe066 0%, #f5c842 100%);
+  color: #1a1200;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* 章节小标题：01 / 文化档案 */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.eyebrow-index {
+  color: var(--color-ikun-yellow);
+  opacity: 0.85;
+}
+
+/* 大标题：更紧的字距，更强的层级 */
+.display-title {
+  font-size: clamp(1.75rem, 4.2vw, 3rem);
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+/* 正文说明：宽松行高，限制行长 */
+.lede {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 46rem;
+}
+
+/* 紫色氛围光晕 */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 70% 50% at 88% 6%, rgba(124, 92, 255, 0.16), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 6% 92%, rgba(214, 122, 168, 0.10), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 50% 0%, rgba(255, 215, 0, 0.07), transparent 65%);
+}
+/* ---------------------------------------------------------------- */
+/* v3.0 版式系统：容器 / 节奏 / 字阶 / 分隔                          */
+/* ---------------------------------------------------------------- */
+.container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
+}
+
+/* 区块节奏：统一竖向留白 */
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.section-tight {
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* 字阶 */
+.type-display {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.type-h1 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.type-h2 {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.type-h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.type-body {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.type-caption {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* 区块分隔线：中间亮、两端淡出 */
+.divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(255, 255, 255, 0.1) 80%,
+    transparent
+  );
+}
+
+/* Bento 网格 */
+.bento {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(9.5rem, auto);
+}
+
+@media (min-width: 1024px) {
+  .bento {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: minmax(10.5rem, auto);
+    gap: 1.125rem;
+  }
+}
+
+.bento-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.bento-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 215, 0, 0.25);
+  box-shadow: 0 22px 50px -26px rgba(0, 0, 0, 0.95);
+}
+
+/* 网格噪点纹理，增加质感 */
+.noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+.container-narrow {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-narrow {
+    padding-inline: 1.5rem;
+  }
 }

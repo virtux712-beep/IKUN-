@@ -1,0 +1,40 @@
+---
+description: IKUN之家项目编码规范与架构约定
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: true
+---
+
+# IKUN之家 · 编码规范
+
+完整规范见 `AGENTS.md`。以下是改代码时必须遵守的核心约定。
+
+## 技术栈
+React 19 + TypeScript(strict) + Vite 8 + Tailwind CSS 4 + motion + sonner + cmdk。
+**纯静态、零后端**，Hash 路由（`#/lab`），PWA 离线可用。
+
+## 完成标准
+改完必须跑 `pnpm verify`（biome check + tsc -b + vitest run + vite build），四项全绿。
+
+## 硬性规则
+- 所有 `<button>` 必须带 `type="button"`
+- 不要给 `div` 挂 `onClick`；分组用 `<fieldset>` + `<legend className="sr-only">`
+- 禁止 `any`、禁止未使用变量
+- 格式化交给 Biome：单引号、无分号、2 空格、行宽 100
+- 优先模板字符串，不用 `+` 拼接
+
+## 新增页面
+1. `src/types/index.ts` 同时更新 `TabId` 与 `TAB_IDS`
+2. 新建 `src/pages/Xxx.tsx`
+3. `src/App.tsx` 加 `lazy()` + `NAV_META` + `renderPage()` 的 case
+4. `Navbar.tsx` 的 `navItems`、`Footer.tsx` 的 `quickLinks` 补入口
+
+## 新增互动项目
+在 `src/features/{reaction,memory,generators,quizzes,audio,tools}.tsx` 写组件 →
+在 `src/features/registry.ts` 注册 → 跑 `pnpm test`。
+复用 `src/features/ui.tsx` 的 `Btn/Bar/Row/Hint/useRecord/SFX`。
+游戏类用「ref 存状态 + 单一 rAF/interval 循环」，禁止高频 setState。
+
+## 禁止
+- 引入 `react-router-dom`
+- 外部网络请求
+- 绕过 `src/store/index.ts` 直接读写 localStorage

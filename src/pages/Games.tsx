@@ -1,5 +1,7 @@
 import { Crosshair, FlaskConical, Gamepad2, Music, Sparkles, Target, Zap } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { useAchievements } from '@/achievements'
+import SectionHeader from '@/components/SectionHeader'
 import CatchBasketball from './games/CatchBasketball'
 import CatchChicken from './games/CatchChicken'
 import FortuneDraw from './games/FortuneDraw'
@@ -94,8 +96,17 @@ const GAMES: {
 
 export default function Games() {
   const [activeGame, setActiveGame] = useState<GameId>('menu')
+  const { record } = useAchievements()
 
   const goMenu = useCallback(() => setActiveGame('menu'), [])
+
+  const startGame = useCallback(
+    (id: GameId) => {
+      setActiveGame(id)
+      record({ type: 'game' })
+    },
+    [record],
+  )
 
   // 游戏内按 Esc 返回菜单
   useEffect(() => {
@@ -116,25 +127,25 @@ export default function Games() {
   if (activeGame === 'fortune') return <FortuneDraw onBack={goMenu} />
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            🎮 <span className="text-ikun-yellow">小游戏</span>中心
-          </h1>
-          <p className="text-gray-400">挑战你的极限，证明你是真正的 ikun</p>
-        </div>
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-page">
+        <SectionHeader
+          index="06"
+          eyebrow="小游戏中心"
+          title="挑战你的极限"
+          description="接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签——七款小游戏，最高分与最佳纪录本地保存。"
+          className="mb-12"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {GAMES.map((game) => (
             <button
               type="button"
               key={game.id}
-              onClick={() => setActiveGame(game.id)}
+              onClick={() => startGame(game.id)}
               className={
-                'group glass rounded-2xl p-7 text-left transition-all duration-300 ' +
-                'hover:bg-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 ' +
-                'bg-gradient-to-br cursor-pointer ' +
+                'group card p-7 text-left transition-all duration-300 ' +
+                'hover:-translate-y-1 bg-gradient-to-br cursor-pointer ' +
                 game.accent
               }
             >

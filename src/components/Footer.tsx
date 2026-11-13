@@ -9,6 +9,8 @@ const quickLinks: { id: TabId; emoji: string; label: string }[] = [
   { id: 'memes', emoji: '😱', label: '表情包' },
   { id: 'music', emoji: '🎵', label: '音乐区' },
   { id: 'games', emoji: '🎮', label: '小游戏' },
+  { id: 'lab', emoji: '🧪', label: '互动实验室' },
+  { id: 'sandbox', emoji: '🧲', label: '物理沙盒' },
   { id: 'messages', emoji: '💬', label: '留言墙' },
   { id: 'search', emoji: '🔍', label: '搜索' },
 ]

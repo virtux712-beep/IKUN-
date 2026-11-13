@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { isSoundEnabled } from '@/settings/sound'
 
 /** 监听媒体查询，SSR 安全 */
 export function useMediaQuery(query: string): boolean {
@@ -219,9 +220,8 @@ export function formatNumber(value: number): string {
 }
 
 /**
- * WebAudio 合成音色：三角波基音 + 正弦泛音的双振荡器，
- * 无需任何音频资源即可发声，供「坤坤琴键」等乐器小玩具使用。
- * AudioContext 懒创建并复用，组件卸载时关闭。
+ * WebAudio 双振荡器合成音（三角基音 + 正弦泛音），供坤坤琴键使用。
+ * AudioContext 懒创建、组件卸载时关闭；发声前检查全局音效开关（与 features/ui 的 tone 一致）。
  */
 export function useSynth(): { playTone: (frequency: number, duration?: number) => void } {
   const ctxRef = useRef<AudioContext | null>(null)
@@ -247,6 +247,7 @@ export function useSynth(): { playTone: (frequency: number, duration?: number) =
 
   const playTone = useCallback(
     (frequency: number, duration = 0.55) => {
+      if (!isSoundEnabled()) return
       const ctx = getContext()
       if (!ctx) return
       const t0 = ctx.currentTime

@@ -1,5 +1,7 @@
 import { Filter, Search, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import SectionHeader from '@/components/SectionHeader'
+
 import { characters, rarityColors, rarityLabels } from '@/data/characters'
 import type { Character } from '@/types'
 
@@ -38,14 +40,15 @@ export default function Encyclopedia() {
   }
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            📖 <span className="text-ikun-yellow">IKUN</span>图鉴
-          </h1>
-          <p className="text-gray-400">探索小黑子宇宙中的传奇角色</p>
-        </div>
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-page">
+        <SectionHeader
+          index="07"
+          eyebrow="IKUN 图鉴"
+          title="探索小黑子宇宙"
+          description="12 位角色，按普通、稀有、传说、神话四档稀有度收录。支持关键词搜索与标签筛选，点击卡片展开详细档案。"
+          className="mb-12"
+        />
 
         {/* 筛选面板 */}
         <div className="glass rounded-2xl p-4 mb-8">
@@ -53,7 +56,7 @@ export default function Encyclopedia() {
             <div className="flex-1 relative">
               <Search
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                 aria-hidden="true"
               />
               <input
@@ -62,7 +65,7 @@ export default function Encyclopedia() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label="搜索角色"
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-ikun-yellow/50 transition-colors"
+                className="w-full pl-12 pr-4 py-3 appearance-none bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-ikun-yellow/50 transition-colors"
               />
             </div>
             <fieldset className="flex items-center gap-2 flex-wrap border-0 p-0 m-0 min-w-0">
@@ -125,7 +128,7 @@ export default function Encyclopedia() {
         </div>
 
         {/* 角色网格 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 xl:gap-5">
           {filtered.map((char) => (
             <CharacterCard
               key={char.id}

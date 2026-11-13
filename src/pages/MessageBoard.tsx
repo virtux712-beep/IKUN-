@@ -1,7 +1,10 @@
 import { Heart, MessageCircle, Send, SmilePlus } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useAchievements } from '@/achievements'
+import SectionHeader from '@/components/SectionHeader'
 import { useToast } from '@/components/Toast'
 import { generateId, useOnClickOutside } from '@/hooks'
+
 import {
   addComment,
   addMessage,
@@ -32,6 +35,7 @@ function formatTime(timestamp: number): string {
 
 export default function MessageBoard() {
   const toast = useToast()
+  const { record } = useAchievements()
   const [messages, setMessages] = useState<Message[]>(getMessages)
   const [nickname, setNickname] = useState(getNickname)
   const [content, setContent] = useState('')
@@ -64,12 +68,17 @@ export default function MessageBoard() {
     }
     setMessages(addMessage(msg))
     setContent('')
+    record({ type: 'message' })
     toast.success('留言发布成功')
-  }, [nickname, content, toast])
+  }, [nickname, content, toast, record])
 
-  const handleLike = useCallback((id: string) => {
-    setMessages(likeMessage(id))
-  }, [])
+  const handleLike = useCallback(
+    (id: string) => {
+      setMessages(likeMessage(id))
+      record({ type: 'like' })
+    },
+    [record],
+  )
 
   const handleReaction = useCallback((id: string, emoji: string) => {
     setMessages(addReaction(id, emoji))
@@ -97,17 +106,19 @@ export default function MessageBoard() {
   const canPost = nickname.trim().length > 0 && content.trim().length > 0
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            💬 <span className="text-ikun-yellow">留言</span>墙
-          </h1>
-          <p className="text-gray-400">与其他小黑子交流互动</p>
-          <p className="text-sm text-gray-500 mt-2">
-            共 <span className="text-ikun-yellow">{messages.length}</span> 条留言
-          </p>
-        </div>
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-narrow">
+        <SectionHeader
+          index="08"
+          eyebrow="留言墙"
+          title="说点什么吧"
+          description={
+            '已经有 ' +
+            messages.length +
+            ' 条留言。可以点赞、加表情、评论，昵称会自动记住。数据保存在你自己的浏览器里。'
+          }
+          className="mb-10"
+        />
 
         {/* 发布框 */}
         <div className="glass rounded-2xl p-5 mb-8">

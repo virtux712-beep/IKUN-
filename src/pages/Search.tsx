@@ -1,5 +1,8 @@
 import { Search as SearchIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useAchievements } from '@/achievements'
+import SectionHeader from '@/components/SectionHeader'
+
 import { characters } from '@/data/characters'
 import { memes } from '@/data/memes'
 import { playlist } from '@/data/music'
@@ -11,6 +14,7 @@ interface SearchProps {
 
 export default function SearchPage({ onTabChange }: SearchProps) {
   const [query, setQuery] = useState('')
+  const { record } = useAchievements()
 
   const results = useMemo(() => {
     if (!query.trim()) return { characters: [], memes: [], songs: [] }
@@ -38,15 +42,16 @@ export default function SearchPage({ onTabChange }: SearchProps) {
   const totalResults = results.characters.length + results.memes.length + results.songs.length
 
   return (
-    <div className="relative z-10 min-h-screen px-4 py-24">
-      <div className="max-w-2xl mx-auto">
+    <div className="relative z-10 min-h-screen pt-24 pb-20">
+      <div className="container-narrow">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
-            🔍 <span className="text-ikun-yellow">搜索</span>
-          </h1>
-          <p className="text-gray-400">搜索ikun之家的所有内容</p>
-        </div>
+        <SectionHeader
+          index="09"
+          eyebrow="全站搜索"
+          title="找点你想看的"
+          description="同时检索图鉴角色、表情包与曲目。输入关键词，或者直接点下面的热门词。"
+          className="mb-10"
+        />
 
         {/* Search Input */}
         <div className="glass rounded-2xl p-4 mb-8">
@@ -59,7 +64,10 @@ export default function SearchPage({ onTabChange }: SearchProps) {
               type="text"
               placeholder="搜索角色、表情包、音乐..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value)
+                if (e.target.value.trim()) record({ type: 'search' })
+              }}
               className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white text-lg placeholder-gray-500 focus:outline-none focus:border-ikun-yellow/50 transition-colors"
             />
           </div>

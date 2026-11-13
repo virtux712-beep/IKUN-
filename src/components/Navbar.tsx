@@ -1,4 +1,4 @@
-import { Menu, Search, X } from 'lucide-react'
+import { Menu, Search, Settings, Trophy, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import type { TabId } from '@/types'
 
@@ -7,6 +7,9 @@ interface NavbarProps {
   onTabChange: (tab: TabId) => void
   onLogoClick?: () => void
   onOpenSearch?: () => void
+  onOpenAchievements?: () => void
+  onOpenSettings?: () => void
+  unlockedCount?: number
 }
 
 const navItems: { id: TabId; label: string; emoji: string }[] = [
@@ -15,11 +18,21 @@ const navItems: { id: TabId; label: string; emoji: string }[] = [
   { id: 'memes', label: '表情包', emoji: '😱' },
   { id: 'music', label: '音乐', emoji: '🎵' },
   { id: 'games', label: '游戏', emoji: '🎮' },
+  { id: 'lab', label: '实验室', emoji: '🧪' },
+  { id: 'sandbox', label: '沙盒', emoji: '🧲' },
   { id: 'messages', label: '留言', emoji: '💬' },
   { id: 'search', label: '搜索', emoji: '🔍' },
 ]
 
-export default function Navbar({ activeTab, onTabChange, onLogoClick, onOpenSearch }: NavbarProps) {
+export default function Navbar({
+  activeTab,
+  onTabChange,
+  onLogoClick,
+  onOpenSearch,
+  onOpenAchievements,
+  onOpenSettings,
+  unlockedCount = 0,
+}: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -99,8 +112,9 @@ export default function Navbar({ activeTab, onTabChange, onLogoClick, onOpenSear
               </span>
             </button>
 
-            {/* 桌面导航 */}
-            <ul className="hidden lg:flex items-center gap-0.5">
+            {/* 桌面导航：整行内容（Logo + 9 项 + 右侧操作）实测需约 1100px，
+                lg(1024) 宽度带内会挤压换行，故断点上调到 xl(1280)，中间带走汉堡菜单 */}
+            <ul className="hidden xl:flex items-center gap-0.5 shrink-0">
               {navItems.map((item) => {
                 const active = activeTab === item.id
                 return (
@@ -110,7 +124,7 @@ export default function Navbar({ activeTab, onTabChange, onLogoClick, onOpenSear
                       onClick={() => handleTabClick(item.id)}
                       aria-current={active ? 'page' : undefined}
                       className={
-                        'relative px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ' +
+                        'relative px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 cursor-pointer ' +
                         (active
                           ? 'text-ikun-yellow bg-ikun-yellow/10'
                           : 'text-gray-400 hover:text-white hover:bg-white/5')
@@ -144,8 +158,29 @@ export default function Navbar({ activeTab, onTabChange, onLogoClick, onOpenSear
 
               <button
                 type="button"
+                onClick={onOpenAchievements}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-ikun-yellow transition-colors cursor-pointer"
+                aria-label="查看成就"
+                title="成就徽章"
+              >
+                <Trophy size={14} />
+                <span className="text-[10px] font-bold tabular-nums">{unlockedCount}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onOpenSettings}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-colors cursor-pointer"
+                aria-label="打开设置"
+                title="设置"
+              >
+                <Settings size={15} />
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setMobileOpen((open) => !open)}
-                className="lg:hidden p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                className="xl:hidden p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                 aria-label={mobileOpen ? '关闭菜单' : '打开菜单'}
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-menu"
@@ -161,7 +196,7 @@ export default function Navbar({ activeTab, onTabChange, onLogoClick, onOpenSear
       <div
         id="mobile-menu"
         className={
-          'fixed inset-0 z-40 lg:hidden transition-opacity duration-200 ' +
+          'fixed inset-0 z-40 xl:hidden transition-opacity duration-200 ' +
           (mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none')
         }
         aria-hidden={!mobileOpen}

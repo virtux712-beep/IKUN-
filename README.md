@@ -2,14 +2,11 @@
 
 > **小黑子的专属精神家园**
 
-[![CI](https://github.com/virtux712-beep/IKUN-/actions/workflows/ci.yml/badge.svg)](https://github.com/virtux712-beep/IKUN-/actions/workflows/ci.yml)
-[![Deploy](https://github.com/virtux712-beep/IKUN-/actions/workflows/deploy.yml/badge.svg)](https://github.com/virtux712-beep/IKUN-/actions/workflows/deploy.yml)
+[![CI](https://github.com/USERNAME/ikun-home/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/ikun-home/actions/workflows/ci.yml)
+[![Deploy](https://github.com/USERNAME/ikun-home/actions/workflows/deploy.yml/badge.svg)](https://github.com/USERNAME/ikun-home/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 React 19 + TypeScript + Vite 8 + Tailwind CSS 4 构建的深色玻璃拟态单页应用。离线可用（PWA）、可安装、带单元测试与 CI 级代码检查。
-
-🌐 **线上演示**：[ikunzhijia.byethost5.com](http://ikunzhijia.byethost5.com/) · [GitHub Pages 镜像](https://virtux712-beep.github.io/IKUN-/)
-📦 **最新发行版**：[v1.1.0](https://github.com/virtux712-beep/IKUN-/releases/tag/v1.1.0)（更新日志见 [CHANGELOG.md](./CHANGELOG.md)）
 
 ---
 
@@ -30,11 +27,12 @@ pnpm lint:fix       # 自动修复
 
 仓库已内置 `.github/workflows/deploy.yml`，推到 `main` 就会自动构建并发布。
 
-本仓库已启用 Pages（Settings → Pages → Source 选择 **GitHub Actions**），推送 `main` 后自动构建发布：
+首次使用需要在 GitHub 上做两件事：
 
-👉 **https://virtux712-beep.github.io/IKUN-/**
+1. **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**
+2. 把本 README 顶部徽章里的 `USERNAME` 换成你的 GitHub 用户名（可选，只是徽章链接）
 
-（Fork 本仓库自部署时，把上面链接换成你自己的用户名与仓库名即可。）
+之后访问 `https://<用户名>.github.io/<仓库名>/` 即可。
 
 > 项目使用 **hash 路由**（`#/memes`）且 `base: './'`，所以部署在任意子路径下都不会白屏，无需额外配置 404 回退。
 
@@ -59,8 +57,8 @@ docker run -d -p 3000:80 ikun-home
 | 动画 | **motion** (Framer Motion) | 3380 万 | 手写 CSS keyframes | `AnimatePresence` 支持**退出动画**（CSS 做不到）、弹簧物理过渡、`useReducedMotion` 无障碍 |
 | 轻提示 | **sonner** | 5737 万 | 手写 Toast 组件（约 120 行） | 自动堆叠、关闭按钮、aria-live、Promise 态 |
 | 命令面板 | **cmdk** | 4671 万 | 手写键盘导航（约 180 行） | 基于 Radix Dialog：**焦点陷阱 / Esc / 滚动锁定 / 模糊匹配**开箱即用 |
-| 离线与安装 | **vite-plugin-pwa** | 736 万 | 无 | Service Worker 预缓存 30 个资源，断网可用、可添加到桌面、自动更新 |
-| 单元测试 | **vitest** | 1.79 亿 | 无 | 27 个测试覆盖存储层、数据完整性与坤签数据 |
+| 离线与安装 | **vite-plugin-pwa** | 736 万 | 无 | Service Worker 预缓存 33 个资源，断网可用、可添加到桌面、自动更新 |
+| 单元测试 | **vitest** | 1.79 亿 | 无 | 42 个测试覆盖存储层、数据完整性、互动项目注册表与成就定义 |
 | Lint + 格式 | **Biome** | 2646 万 | oxlint（仅 lint） | 一个工具同时管 lint 与格式化，比 ESLint+Prettier 快一个数量级 |
 
 **没有采纳的**：`zustand`（9112 万下载）——本项目状态只有「当前标签页」一层，用 props 传递比引入全局 store 更简单，属于过度设计。
@@ -94,12 +92,58 @@ docker run -d -p 3000:80 ikun-home
 | 🐔 抓鸡 | Pointer Events 统一鼠标/触摸，递归定时器随分数加速 |
 | ⚡ 反应测试 | 定时器完整生命周期，抢跑判定，S~D 评级 |
 | 🧪 纯度测试 | 15 题，SVG 环形进度条出分 |
-| 🎯 投篮挑战 | rAF + delta 时间跑针（帧率无关），绿区 / 完美球判定，最佳连进 localStorage 持久化，空格出手 |
-| 🎹 坤坤琴键 | WebAudio 双振荡器合成音色（零音频资源），五声音阶五键，键盘 1–5 + 示范弹奏 |
-| 🔮 今日坤签 | 8 支签文数据与逻辑分离（可注入随机源，已单测），连抽同签自动顺延，aria-live 播报 |
 
 ### 💬 留言墙
 发布 / 点赞 / 8 种表情反应 / 评论，昵称记忆，选择器点击外部关闭，中文输入法回车不误触发。
+
+### 🖼️ v2.2 分享与借鉴
+
+| 能力 | 说明 |
+| --- | --- |
+| **分享卡片** | Canvas 生成 1080×1350 分享图，走 `navigator.share`，不支持时下载 PNG |
+| **全屏答题** | 纯度测试改为移动端单题单屏 + 即时反馈 |
+| **打字鸡叫** | 键盘输入随机触发鸡叫（默认关闭） |
+| **坤宠挂件** | 右下角可拖动的小坤宠，9 种动作与台词 |
+| **60 个表情包** | 从 18 个扩充到 60 个，覆盖 6 大分类 |
+
+同题材项目调研见 [`docs/BENCHMARK.md`](./docs/BENCHMARK.md)，设计令牌见 [`docs/DESIGN-TOKENS.md`](./docs/DESIGN-TOKENS.md)。
+
+### 🎨 v2.0 全局系统
+
+参考 GitHub 上的趣味项目，给整个站点加了一层「元游戏」与氛围层：
+
+| 系统 | 说明 |
+| --- | --- |
+| 🏆 **成就徽章** | 20 个可解锁成就，贯穿全站行为（浏览、收藏、游戏、实验室、彩蛋…），导航栏实时显示进度 |
+| 🎨 **主题换肤** | 5 套配色（经典金 / 樱花粉 / 薄荷绿 / 星云紫 / 深海蓝），CSS 变量驱动，持久化 |
+| ✨ **光标拖尾** | 桌面端金色粒子拖尾，参考 `tholman/cursor-effects`，触屏自动禁用 |
+| 🃏 **3D 倾斜卡片** | 鼠标悬停卡片跟随倾斜 + 高光，参考 `vanilla-tilt.js`，零依赖 |
+| 🧲 **物理沙盒** | 自研圆体物理引擎：重力积分、墙壁反弹、圆-圆弹性碰撞、质量冲量解算，可拖拽投掷 |
+| ⚙️ **设置面板** | 主题 / 音效 / 拖尾 / 倾斜 / 减少动效，统一开关并持久化 |
+
+**成就列表（20 个）**
+
+初次到访 · 全站通 · 图鉴学者 · 表情包收藏家 · 音乐发烧友 · 游戏高手 · 实验室常客 · 实验室狂人 · 全知者 · 话痨 · 点赞狂魔 · 搜索达人 · 键盘侠 · 彩蛋猎人 · 换肤达人 · 夜猫子 · 手速之神 · 只因之神 · 三日忠实粉 · IKUN 之神
+
+### 🧪 互动实验室（40 个）
+
+全部纯前端实现，**零外部资源、零后端**，断网也能玩。入口：导航栏「实验室」。
+
+| 分类 | 数量 | 项目 |
+| --- | --- | --- |
+| ⚡ 反应挑战 | 8 | 铁山靠格挡 · 鸡你太美节奏点击 · 两年半精准计时 · 打柠檬 · 只因打地鼠 · 手速测试 CPS · 找不同的鸡 · 罚球挑战 |
+| 🧠 脑力对决 | 6 | 唱跳 rap 接龙 · 鸡窝翻牌 · 井字棋（minimax AI）· 只因迷宫 · 只因华容道 · 猜数字 |
+| 🎨 只因生成器 | 8 | 只因体生成器 · 表情包生成器 · IKUN 昵称生成器 · 小黑子身份证 · 坤坤语录生成器 · 只因翻译器 · 篮球头像生成器 · 鸡窝签名生成器 |
+| 📊 灵魂测试 | 5 | 你是哪种 ikun · 小黑子段位测试 · ikun 成分分析（雷达图）· 只因指数计算器 · 今日运势 |
+| 🎵 音效怪谈 | 6 | 鸡叫模拟器 · 铁山靠音效板 · 只因时钟 · 功德木鱼 · 鸡头稳定器 · 篮球弹跳 |
+| 🔧 沙雕工具 | 7 | 只因计算器 · 鸡你太美打字机 · 反小黑子检测器 · 鸡腿转盘 · 今日鸡腿 · 只因倒计时 · 弹幕鸡窝 |
+
+技术要点：
+
+- **音效全部用 Web Audio API 实时合成**，没有任何 mp3 / wav 文件，加载零成本
+- **Canvas 生成器**（表情包 / 身份证 / 头像）可直接导出 PNG 下载
+- 游戏类统一用「ref 存状态 + 单一 rAF 循环」，避免 React 高频 setState 抖动
+- 实验室整体路由懒加载，独立 chunk 仅 **23.5 kB gz**，不影响首页
 
 ### ⌨️ 全局能力
 - **`Ctrl / Cmd + K`** 命令面板（cmdk）：模糊搜索页面、复制链接、召唤彩蛋
@@ -126,14 +170,9 @@ docker run -d -p 3000:80 ikun-home
 - motion 页面转场 + 弹层退出动画
 - sonner 替换手写 Toast，cmdk 替换手写命令面板
 - PWA：Service Worker 预缓存、可安装、离线可用、自动更新
-- Vitest 27 个单元测试（存储层 + 数据完整性 + 坤签数据）
+- Vitest 25 个单元测试（存储层 + 数据完整性 + 类型守卫）
 - Biome 统一 lint 与格式化，**0 error 0 warning**
 - 按 vendor 拆包：`react-vendor` / `motion-vendor` / `ui-vendor`，发版只失效业务代码
-
-### 第三轮：内容扩展（v1.1.0，2026-11-13）
-- 小游戏中心 +3：投篮挑战、坤坤琴键、今日坤签（原型为单页小游戏，移植为 React 组件并入发行版）
-- 坤签数据抽为 `src/data/fortunes.ts` 并补单元测试（25 → 27 个）
-- 线上演示站同步升级 v1.1.0；GitHub Pages 镜像启用
 
 ### ♿️ 无障碍
 - 全站 `type="button"`、`:focus-visible` 焦点环、跳过导航链接
@@ -145,7 +184,7 @@ docker run -d -p 3000:80 ikun-home
 ### 🔧 工程化
 - TypeScript `strict` + `noImplicitOverride`
 - Biome 同时承担 lint 与格式化（替代 oxlint）
-- Vitest + 27 个测试
+- Vitest + 25 个测试
 - Dockerfile 改用 pnpm + `--frozen-lockfile`，修复健康检查缺 `curl` 的问题
 - nginx：HTML 不缓存 / 静态资源 immutable、CSP 等安全头
 - 补齐 `robots.txt`、`sitemap.xml`、OG/Twitter 卡片、JSON-LD
@@ -155,17 +194,17 @@ docker run -d -p 3000:80 ikun-home
 ## 📊 产物体积
 
 ```
-react-vendor  121.4 kB gz   React 运行时（长缓存）
-index.css      11.9 kB gz   Tailwind + 自定义样式
-Games          11.8 kB gz   小游戏中心（7 款游戏，按需加载）
-index           9.3 kB gz   业务代码
-vendor          5.1 kB gz   motion / sonner / cmdk 等第三方库
-其他页面 chunk  0.8 ~ 3.5 kB gz   按需加载
+react-vendor   79.2 kB gz   React 运行时（长缓存）
+motion-vendor  34.6 kB gz   动画引擎（长缓存）
+ui-vendor       9.1 kB gz   sonner + cmdk + Radix Dialog
+index           9.0 kB gz   业务代码
+index.css      11.5 kB gz   Tailwind + 自定义样式
+其他页面 chunk  0.8 ~ 8.5 kB gz   按需加载
 ```
 
-（v1.1.0 生产构建实测，gzip 后大小。）
-
 首屏约 **148 kB gz**，PWA 预缓存后二次访问接近 0 请求。
+
+> 💡 如果只需要淡入淡出、不想要退出动画，可以把 motion 换成浏览器原生 **View Transitions API**，能省下 34.6 kB gz。
 
 ---
 
@@ -179,8 +218,7 @@ ikun-home/
 │   │   └── deploy.yml            # 自动发布到 GitHub Pages
 │   └── dependabot.yml            # 依赖自动升级
 ├── docs/
-│   ├── IKUN之家-运行教程.docx
-│   └── IKUN之家-运行教程.md            # 同上（Markdown 版）
+│   └── IKUN之家-运行教程.docx
 ├── public/
 │   ├── favicon.svg
 │   ├── pwa-192x192.png / pwa-512x512.png / pwa-maskable-512x512.png
@@ -198,10 +236,28 @@ ikun-home/
 │   │   ├── ErrorBoundary.tsx
 │   │   ├── ScrollProgress.tsx
 │   │   └── CommandPalette.tsx    # cmdk
+│   ├── settings/                 # 主题 / 音效 / 特效设置
+│   │   ├── themes.ts             # 5 套配色定义
+│   │   ├── index.tsx             # SettingsProvider
+│   │   └── sound.ts              # 模块级音效开关
+│   ├── achievements/             # 20 个成就定义与追踪
+│   │   └── index.tsx
+│   ├── features/                 # 40 个互动项目
+│   │   ├── types.ts              # 分类与定义类型
+│   │   ├── ui.tsx                # 共享按钮/进度条/音效合成/计时 Hook
+│   │   ├── registry.ts           # 40 项注册表
+│   │   ├── reaction.tsx          # 反应挑战 ×8
+│   │   ├── memory.tsx            # 脑力对决 ×6
+│   │   ├── generators.tsx        # 只因生成器 ×8
+│   │   ├── quizzes.tsx           # 灵魂测试 ×5
+│   │   ├── audio.tsx             # 音效怪谈 ×6
+│   │   └── tools.tsx             # 沙雕工具 ×7
 │   ├── pages/
 │   │   ├── Home.tsx / Encyclopedia.tsx / MemeCenter.tsx
 │   │   ├── MusicPlayer.tsx / Games.tsx / MessageBoard.tsx / Search.tsx
-│   │   └── games/{CatchBasketball,CatchChicken,ReactionTest,PurityTest,ShootingChallenge,KunPiano,FortuneDraw}.tsx
+│   │   ├── Lab.tsx               # 互动实验室（40 项网格 + 弹层）
+│   │   ├── Sandbox.tsx           # 鸡窝物理沙盒
+│   │   └── games/{CatchBasketball,CatchChicken,ReactionTest,PurityTest}.tsx
 │   ├── data/                     # 角色 / 表情包 / 音乐 / 题库
 │   ├── store/                    # LocalStorage 封装（+ 单元测试）
 │   ├── hooks/                    # useHotkey / useOnClickOutside / ...
@@ -242,6 +298,35 @@ ikun-home/
 - 数据库（PostgreSQL / MongoDB）
 - WebSocket 实时留言
 - 真实音频源与歌词同步
+
+---
+
+## 🤖 AI 协作（Vibe Coding 就绪）
+
+本仓库按「AI 可直接接手」的标准组织，主流编码工具都能拿到准确的上下文：
+
+| 文件 | 适配的工具 |
+| --- | --- |
+| [`AGENTS.md`](./AGENTS.md) | 通用标准（Codex / Jules / Cursor / Windsurf 等） |
+| [`CLAUDE.md`](./CLAUDE.md) | Claude Code |
+| [`.cursor/rules/ikun.mdc`](./.cursor/rules/ikun.mdc) | Cursor |
+| [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | GitHub Copilot |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | 人 + AI 都适用的架构说明 |
+
+**一个命令验证所有改动：**
+
+```bash
+pnpm verify   # biome check → tsc -b → vitest run → vite build
+```
+
+CI（`.github/workflows/ci.yml`）跑的就是同一条命令，本地绿了线上就绿。
+
+**为什么这样组织：**
+
+- **约定写进可执行检查**，而不是只写在文档里 —— `type="button"`、`div` 不许挂 `onClick`、禁止 `any`，全部由 Biome 拦截
+- **结构自检** —— `registry.test.ts` 校验 40 个互动项目的 id 唯一、分类合法、组件已挂载；新增项目忘了注册会直接测试失败
+- **纯数据与 UI 分离** —— `achievements/definitions.ts`、`settings/themes.ts`、`features/types.ts` 都不依赖 React，AI 检索和单测都不需要理解组件上下文
+- **单一事实来源** —— 本地 `pnpm verify` 与 CI 完全一致，避免「本地过了线上挂」
 
 ---
 
