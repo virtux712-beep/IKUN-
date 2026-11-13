@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint / Typecheck / Test / Build
+    name: Verify (lint / typecheck / test / build)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,14 +30,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint & format check
-        run: pnpm lint
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Unit tests
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
+      # 与本地 `pnpm verify` 完全一致：单一事实来源
+      - name: Verify
+        run: pnpm verify
