@@ -63,7 +63,7 @@ function Hero({
               className="type-body mt-6 max-w-xl animate-fadeUp"
               style={{ animationDelay: '0.12s' }}
             >
-              唱 · 跳 · Rap · 篮球。这里收着 60 个表情包、40 个互动项目、7
+              唱 · 跳 · Rap · 篮球。这里收着 60 个表情包、40 个互动项目、10
               款小游戏，还有一整面属于小黑子的留言墙。全部纯前端，断网也能玩。
             </p>
 
@@ -209,9 +209,9 @@ const BENTO: BentoItem[] = [
     key: 'games',
     emoji: '🎮',
     title: '小游戏',
-    desc: '接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签。',
+    desc: '接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签、只因合成、鸡窝放置、只因打字。',
     tab: 'games',
-    badge: '7 款',
+    badge: '10 款',
     span: 'lg:col-span-2',
     glow: 'from-orange-500/12',
   },
