@@ -2,6 +2,7 @@ import {
   Crosshair,
   FlaskConical,
   Gamepad2,
+  Keyboard,
   Layers,
   Music,
   Sparkles,
@@ -21,6 +22,7 @@ import MergeChicken from './games/MergeChicken'
 import PurityTest from './games/PurityTest'
 import ReactionTest from './games/ReactionTest'
 import ShootingChallenge from './games/ShootingChallenge'
+import TypingChallenge from './games/TypingChallenge'
 
 type GameId =
   | 'menu'
@@ -33,6 +35,7 @@ type GameId =
   | 'fortune'
   | 'merge'
   | 'idle'
+  | 'typing'
 
 const GAMES: {
   id: GameId
@@ -124,6 +127,15 @@ const GAMES: {
     accent: 'from-yellow-500/15 to-orange-500/15',
     icon: <TrendingUp size={18} />,
   },
+  {
+    id: 'typing',
+    emoji: '⌨️',
+    title: '只因打字',
+    desc: '60 秒输入 ikun 拼音语录，实时统计 WPM 与准确率',
+    tag: '打字 · 竞速',
+    accent: 'from-sky-500/15 to-blue-500/15',
+    icon: <Keyboard size={18} />,
+  },
 ]
 
 export default function Games() {
@@ -159,6 +171,7 @@ export default function Games() {
   if (activeGame === 'fortune') return <FortuneDraw onBack={goMenu} />
   if (activeGame === 'merge') return <MergeChicken onBack={goMenu} />
   if (activeGame === 'idle') return <IdleNest onBack={goMenu} />
+  if (activeGame === 'typing') return <TypingChallenge onBack={goMenu} />
 
   return (
     <div className="relative z-10 min-h-screen pt-24 pb-20">
@@ -167,7 +180,7 @@ export default function Games() {
           index="06"
           eyebrow="小游戏中心"
           title="挑战你的极限"
-          description="九款小游戏：接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签、只因合成、鸡窝放置。全部纯前端实现，进度本地保存。"
+          description="十款小游戏：接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键（含音游模式）、今日坤签、只因合成、鸡窝放置、只因打字。全部纯前端实现。"
           className="mb-12"
         />
 

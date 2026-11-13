@@ -9,6 +9,45 @@
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/) 与
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 规范。
 
+## [2.2.0] - 打字游戏 + 音游升级
+
+第二轮 GitHub 全网检索（打分类、音游类项目集中调研）后的落地。
+
+### 检索依据
+
+| 参考项目 | Star | 启发 |
+| --- | ---: | --- |
+| `RealKai42/qwerty-learner` | 23762 | 打字训练是超级热门品类 |
+| `unhappychoice/gittype` | 1662 | 把代码变成打字游戏 |
+| `max-niederman/ttyper` | 1615 | 极简打字测试的核心指标设计 |
+| `bemusic/bemuse` | 1256 | 网页音游的下落式音符 + 判定模型 |
+| `111116/webosu` | 649 | 浏览器内音游的可行性 |
+
+### 新增
+
+- ⌨️ **只因打字**（`games/TypingChallenge.tsx` + `games/typing.ts`）
+  - 60 秒限时，输入 ikun 语录的**拼音**（规避中文 IME 兼容问题）
+  - 逐字符着色：正确=绿、错误=红、未输入=灰，当前位置有光标
+  - 实时 WPM（正确字符 ÷ 5 ÷ 分钟）与准确率
+  - 结束时按 WPM + 准确率综合评级 S/A/B/C/D
+  - 纯逻辑抽为 `typing.ts`（`compareChars` / `computeStats` / `wpm` / `accuracy` / `gradeOf` / `pickPhrases`），配 7 个单元测试
+
+### 升级
+
+- 🎼 **坤坤琴键新增音游模式**（`games/KunPiano.tsx` + `games/rhythm.ts`）
+  - 双模式：自由弹奏（原功能）/ 音游模式（新）
+  - 下落式音符，5 轨道，键盘 `D F 空格 J K`
+  - 三级判定窗口：PERFECT ±55ms / GREAT ±110ms / GOOD ±180ms
+  - 连击倍率每 10 连 +10%，上限 2 倍
+  - 漏击自动判定 MISS，结束时按加权准确率给 SSS～D 评级
+  - 判定逻辑抽为 `rhythm.ts`（`buildChart` / `pickHit` / `collectMissed` / `applyHit` / `accuracyOf` / `rankOf`），配 9 个单元测试
+
+### 变更
+
+- 小游戏中心由 9 款增至 **10 款**
+- 单元测试 52 → **68**（打字 7 + 音游 9）
+- 版本号 2.1.0 → 2.2.0
+
 ## [2.1.0] - 小游戏扩充与手感升级
 
 参考 GitHub 热门小游戏品类（2048 合并系、A Dark Room 放置系、shapez.io 反馈设计），新增两款游戏并建立共享手感层。
