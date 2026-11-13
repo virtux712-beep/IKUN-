@@ -9,6 +9,30 @@
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/) 与
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 规范。
 
+## [2.0.4] - TypeScript 7 升级
+
+清单 D 组遗留项：验证 TypeScript 7 兼容性并落地。
+
+### 已升级
+
+- **TypeScript 6.0.3 → 7.0.2**，`devDependencies` 由 `~6.0.2` 改为 `~7.0.2`
+
+### 兼容性验证
+
+| 项目 | 结果 |
+| --- | --- |
+| `tsc -b`（strict） | 0 error |
+| `vite build` | 成功，PWA 预缓存 35 项 |
+| `vitest run` | 44 passed |
+| `biome check` | 0 error（7 个既有 `useTemplate` info） |
+
+### 为适配 TS 7 的配置变更
+
+- **移除 `baseUrl`**：TS 7 已删除该选项（`TS5102: Option 'baseUrl' has been removed`）。`paths` 现按 `tsconfig.json` 所在目录解析，`"@/*": ["./src/*"]` 无需改写即可继续工作
+- **移除 `ignoreDeprecations: "6.0"`**：TS 7 下已无对应弃用项
+- `tsconfig.node.json` 原本无 `baseUrl`，未改动
+- CI 使用 `pnpm verify` 聚合命令，不含硬编码 TS 版本，无需调整
+
 ## [2.0.3] - 导航断点修复
 
 ### 修复
