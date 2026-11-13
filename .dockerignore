@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+*.log
+*.docx
+ikun-home.zip
+README.md
+.vscode
+.idea

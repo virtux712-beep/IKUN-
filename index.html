@@ -1,288 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ikun之家</title>
-<meta name="description" content="ikun之家 —— 唱、跳、RAP、篮球。ikun 们的线上鸡窝：文化档案、投篮挑战、坤坤琴键、今日坤签。">
-<style>
-:root{
-  --bg:#0d0a1a; --bg2:#171130; --card:rgba(255,255,255,.055); --line:rgba(255,255,255,.12);
-  --txt:#f4f1ff; --mut:rgba(244,241,255,.66); --pink:#ff5d8f; --gold:#ffc94d; --vio:#8b7bff; --cyan:#4dd8ff;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;overflow-x:hidden}
-::selection{background:var(--pink);color:#fff}
-a{color:inherit;text-decoration:none}
-.bg-fx{position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(900px 500px at 12% -5%,rgba(139,123,255,.28),transparent 60%),
-  radial-gradient(800px 480px at 88% 8%,rgba(255,93,143,.20),transparent 60%),
-  radial-gradient(1000px 700px at 50% 110%,rgba(77,216,255,.12),transparent 60%),
-  linear-gradient(180deg,#0d0a1a,#120d26 45%,#0d0a1a)}
-.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
-nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;width:min(1060px,calc(100% - 28px));
-  display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-radius:999px;
-  background:rgba(16,12,34,.66);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.logo{font-weight:800;font-size:18px;letter-spacing:1px}
-.logo em{font-style:normal;background:linear-gradient(90deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
-nav .links{display:flex;gap:22px;font-size:14px;color:var(--mut)}
-nav .links a:hover{color:#fff}
-@media(max-width:640px){nav .links{display:none}}
-.wrap{width:min(1060px,calc(100% - 40px));margin:0 auto}
-header.hero{padding:168px 0 84px;text-align:center;position:relative}
-.ball{font-size:54px;display:inline-block;animation:bounce 1.6s ease-in-out infinite;filter:drop-shadow(0 18px 22px rgba(0,0,0,.45))}
-@keyframes bounce{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-26px) rotate(10deg)}}
-.hero h1{font-size:clamp(56px,11vw,110px);font-weight:900;letter-spacing:4px;line-height:1.08;margin:20px 0 8px;
-  background:linear-gradient(92deg,#fff 10%,var(--pink) 42%,var(--gold) 68%,var(--cyan) 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{font-size:clamp(17px,3vw,23px);color:var(--mut);letter-spacing:6px}
-.hero .intro{max-width:620px;margin:26px auto 0;color:var(--mut);line-height:1.9;font-size:15.5px}
-.cta{margin-top:36px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.btn{padding:13px 28px;border-radius:999px;font-size:15px;font-weight:700;border:1px solid var(--line);background:rgba(255,255,255,.06);cursor:pointer;color:var(--txt);transition:.22s}
-.btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.35)}
-.btn.hot{background:linear-gradient(92deg,var(--pink),#ff8a5d);border:none;color:#fff;box-shadow:0 12px 32px rgba(255,93,143,.35)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:64px auto 0;max-width:820px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 10px}
-.stat b{display:block;font-size:clamp(22px,4vw,32px);background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-.stat span{font-size:13px;color:var(--mut);letter-spacing:2px}
-@media(max-width:640px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}}
-.marquee{margin:74px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:15px 0;overflow:hidden;white-space:nowrap}
-.marquee .track{display:inline-block;animation:mq 26s linear infinite;font-size:15px;letter-spacing:3px;color:var(--mut)}
-.marquee b{color:var(--gold);font-weight:700}
-@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-section{padding:88px 0 8px}
-.kicker{font-size:13px;letter-spacing:4px;color:var(--pink);font-weight:700}
-h2{font-size:clamp(30px,5.4vw,44px);font-weight:900;margin:10px 0 12px;letter-spacing:1px}
-.lead{color:var(--mut);line-height:1.9;max-width:640px;font-size:15.5px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:36px}
-@media(max-width:720px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;transition:.25s}
-.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.08)}
-.card .tag{display:inline-block;font-size:12px;letter-spacing:2px;color:#0d0a1a;background:linear-gradient(90deg,var(--gold),#ffd97a);padding:4px 12px;border-radius:999px;font-weight:800}
-.card h3{font-size:23px;margin:16px 0 10px}
-.card p{color:var(--mut);line-height:1.85;font-size:14.5px}
-.play{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:26px;padding:34px;margin-top:36px}
-.play h3{font-size:22px;margin-bottom:6px}
-.play .tip{color:var(--mut);font-size:14px;line-height:1.8}
-.court{margin:26px auto 6px;max-width:520px;text-align:center}
-.hoop{font-size:64px;line-height:1}
-.flyball{font-size:44px;display:inline-block;transition:transform .55s cubic-bezier(.2,.7,.3,1),opacity .55s}
-.meter{height:20px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid var(--line);position:relative;overflow:hidden;margin:22px auto 6px;max-width:520px}
-.zone{position:absolute;top:0;bottom:0;left:42%;width:16%;background:linear-gradient(90deg,rgba(77,255,160,.55),rgba(77,255,160,.85))}
-.needle{position:absolute;top:-2px;bottom:-2px;width:5px;border-radius:3px;background:#fff;box-shadow:0 0 10px #fff;left:0}
-.meter-lab{display:flex;justify-content:space-between;max-width:520px;margin:0 auto;font-size:12px;color:var(--mut);letter-spacing:1px}
-.score{display:flex;gap:26px;justify-content:center;margin:20px 0 4px;font-size:15px;color:var(--mut)}
-.score b{color:#fff;font-size:20px}
-.msg{min-height:28px;text-align:center;font-size:17px;font-weight:700;color:var(--gold);margin-top:10px}
-.pads{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:24px}
-@media(max-width:640px){.pads{grid-template-columns:repeat(5,1fr);gap:8px}}
-.pad{border:1px solid var(--line);border-radius:18px;padding:26px 4px 20px;text-align:center;cursor:pointer;user-select:none;transition:.15s;background:rgba(255,255,255,.05)}
-.pad .w{font-size:27px;font-weight:900;display:block}
-.pad .n{font-size:11.5px;color:var(--mut);letter-spacing:1px}
-.pad:active,.pad.on{transform:scale(.94)}
-.pad:nth-child(1){box-shadow:inset 0 -6px 0 rgba(255,93,143,.55)} .pad:nth-child(2){box-shadow:inset 0 -6px 0 rgba(255,138,93,.55)}
-.pad:nth-child(3){box-shadow:inset 0 -6px 0 rgba(255,201,77,.55)} .pad:nth-child(4){box-shadow:inset 0 -6px 0 rgba(77,255,160,.45)}
-.pad:nth-child(5){box-shadow:inset 0 -6px 0 rgba(77,216,255,.55)}
-.fortune-card{margin:24px auto 4px;max-width:520px;background:linear-gradient(135deg,rgba(255,201,77,.14),rgba(255,93,143,.12));border:1px solid rgba(255,201,77,.4);border-radius:22px;padding:30px 26px;text-align:center;min-height:132px;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.fortune-card .big{font-size:24px;font-weight:900;letter-spacing:2px}
-.fortune-card .small{color:var(--mut);font-size:14px;line-height:1.8}
-.center{text-align:center}
-.about{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:36px;margin-top:36px}
-.about p{color:var(--mut);line-height:2;font-size:15px}
-.about a.repo{display:inline-block;margin-top:18px;padding:11px 24px;border-radius:999px;border:1px solid var(--line);font-weight:700;font-size:14px;background:rgba(255,255,255,.06)}
-.about a.repo:hover{border-color:rgba(255,255,255,.35)}
-footer{padding:74px 0 46px;text-align:center;color:var(--mut);font-size:13.5px;line-height:2}
-.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
-.rv.in{opacity:1;transform:none}
-</style>
-</head>
-<body>
-<div class="bg-fx"></div><div class="grain"></div>
-<nav>
-  <div class="logo">🐔 <em>ikun</em>之家</div>
-  <div class="links">
-    <a href="#archive">文化档案</a><a href="#play">互动乐园</a><a href="#about">关于</a>
-    <a href="https://github.com/virtux712-beep/IKUN-" target="_blank" rel="noopener">GitHub 仓库</a>
-  </div>
-</nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
 
-<header class="hero wrap">
-  <span class="ball">🏀</span>
-  <h1>ikun之家</h1>
-  <div class="sub">唱 · 跳 · R A P · 篮 球</div>
-  <p class="intro">欢迎来到 ikun 们的线上鸡窝。这里收录着我们的文化档案，还备了投篮挑战、坤坤琴键和今日坤签——来了就别光看着，下场玩两把。</p>
-  <div class="cta">
-    <a class="btn hot" href="#play">🎮 进互动乐园</a>
-    <a class="btn" href="#archive">📚 看文化档案</a>
-  </div>
-  <div class="stats">
-    <div class="stat"><b>两年半</b><span>练 习 时 长</span></div>
-    <div class="stat"><b>4 卷</b><span>文 化 档 案</span></div>
-    <div class="stat"><b>3 玩</b><span>互 动 玩 法</span></div>
-  </div>
-</header>
+    <title>IKUN之家 · 小黑子的专属精神家园</title>
+    <meta
+      name="description"
+      content="IKUN之家——小黑子的专属精神家园。图鉴、表情包、音乐、小游戏、纯度测试、留言墙，唱跳 rap 篮球一个都不能少。"
+    />
+    <meta name="keywords" content="IKUN,ikun之家,小黑子,鸡你太美,唱跳rap篮球,表情包,纯度测试" />
+    <meta name="author" content="IKUN之家" />
+    <meta name="robots" content="index, follow" />
+    <!-- TODO: 上线前把 ikun.example.com 替换成你的真实域名
+         （GitHub Pages 则为 https://<用户名>.github.io/<仓库名>/），
+         并同步更新 public/robots.txt 与 public/sitemap.xml -->
+    <link rel="canonical" href="https://ikun.example.com/" />
 
-<div class="marquee"><div class="track" id="mq"></div></div>
+    <!-- Open Graph / 社交分享 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="IKUN之家" />
+    <meta property="og:title" content="IKUN之家 · 小黑子的专属精神家园" />
+    <meta
+      property="og:description"
+      content="图鉴、表情包、音乐、小游戏、纯度测试、留言墙，唱跳 rap 篮球一个都不能少。"
+    />
+    <meta property="og:url" content="https://ikun.example.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="IKUN之家 · 小黑子的专属精神家园" />
+    <meta
+      name="twitter:description"
+      content="图鉴、表情包、音乐、小游戏、纯度测试、留言墙，唱跳 rap 篮球一个都不能少。"
+    />
 
-<section id="archive" class="wrap">
-  <div class="kicker rv">01 / 文 化 档 案</div>
-  <h2 class="rv">名场面，一卷都不能少</h2>
-  <p class="lead rv">每一位 ikun 都会背的经典，全都在这儿了。新来的朋友请先补课，老 ikun 请大声朗读并背诵全文。</p>
-  <div class="grid">
-    <div class="card rv"><span class="tag">镇馆之宝</span>
-      <h3>🐔 鸡你太美</h3>
-      <p>源自《只因你太美》的一句空耳，意外成为传播最广的文化符号。听到这四个字还能面不改色的，基本可以判定不是自己人。</p></div>
-    <div class="card rv"><span class="tag">入教仪式</span>
-      <h3>🎤 唱、跳、RAP、篮球</h3>
-      <p>那段自我介绍，短短几个字，信息量拉满：唱、跳、RAP、篮球——四大才艺一字排开，从此成为 ikun 的接头暗号。</p></div>
-    <div class="card rv"><span class="tag">时间计量单位</span>
-      <h3>⏱ 练习时长两年半</h3>
-      <p>「练习时长两年半」——在 ikun 的世界里，两年半不是一段时间，而是一种信仰、一种资历、一种宇宙通用计量单位。</p></div>
-    <div class="card rv"><span class="tag">镇站神曲</span>
-      <h3>🎵 只因你太美</h3>
-      <p>一切梗的源头，一切故事的开始。前奏一响，DNA 就动了。本站不敢放原曲，但下面的坤坤琴键可以让你亲手弹个气氛。</p></div>
-  </div>
-</section>
+    <!-- 图标：内联 SVG，无需额外请求 -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐔</text></svg>"
+    />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
-<section id="play" class="wrap">
-  <div class="kicker rv">02 / 互 动 乐 园</div>
-  <h2 class="rv">光看不过瘾，下场玩</h2>
-  <p class="lead rv">三样都能上手：比眼力的投篮挑战、能弹的坤坤琴键、每天一抽的今日坤签。</p>
+    <!-- 首屏底色：避免白屏闪烁 -->
+    <style>
+      html,
+      body {
+        background: #0a0a0a;
+        margin: 0;
+      }
+      #root:empty::after {
+        content: "🐔";
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 48px;
+        opacity: 0.5;
+        animation: boot-pulse 1.2s ease-in-out infinite;
+      }
+      @keyframes boot-pulse {
+        0%,
+        100% {
+          opacity: 0.25;
+          transform: scale(0.96);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.04);
+        }
+      }
+    </style>
 
-  <div class="play rv">
-    <h3>🏀 投篮挑战</h3>
-    <p class="tip">白针在能量条里来回跑，按下「出手」的那一刻停在哪儿很关键：停进绿色区就进球，越靠近正中心评价越高。连进有惊喜文案。</p>
-    <div class="court">
-      <div class="hoop">🏀</div>
-      <div class="flyball" id="fly">🏀</div>
-    </div>
-    <div class="meter"><div class="zone"></div><div class="needle" id="needle"></div></div>
-    <div class="meter-lab"><span>打铁区</span><span style="color:#4dffa0">进球区</span><span>打铁区</span></div>
-    <div class="score"><span>进球 <b id="sc">0</b></span><span>出手 <b id="sh">0</b></span><span>连进 <b id="st">0</b></span></div>
-    <div class="center" style="margin-top:14px"><button class="btn hot" id="shoot">🏀 出 手</button></div>
-    <div class="msg" id="msg">瞄准绿色区，按下出手！</div>
-  </div>
-
-  <div class="play rv">
-    <h3>🎹 坤坤琴键</h3>
-    <p class="tip">五个键，五声音阶，怎么乱弹都不难听。点一点，或者按键盘 1–5。先听听示范，再秀你自己的两年半功力。</p>
-    <div class="pads" id="pads"></div>
-    <div class="center" style="margin-top:20px"><button class="btn" id="demo">▶ 听一段示范</button></div>
-  </div>
-
-  <div class="play rv">
-    <h3>🔮 今日坤签</h3>
-    <p class="tip">每天进门先抽一签，看看今天宜干什么。手气这东西，抽到什么全看缘分。</p>
-    <div class="fortune-card"><div class="big" id="fbig">尚未抽签</div><div class="small" id="fsmall">点击下方按钮，抽取你今天的坤签。</div></div>
-    <div class="center" style="margin-top:20px"><button class="btn hot" id="draw">🙏 抽 一 签</button></div>
-  </div>
-</section>
-
-<section id="about" class="wrap">
-  <div class="kicker rv">03 / 关 于 本 站</div>
-  <h2 class="rv">关于 ikun之家</h2>
-  <div class="about rv">
-    <p>「ikun之家」是 ikun 们自娱自乐的线上小窝，粉丝自制、纯属好玩，与任何官方无关。站点是纯静态网页，托管在一台免费主机上，源码完整放在 GitHub 仓库里，想参观、想提建议、想一起建设，都欢迎。</p>
-    <a class="repo" href="https://github.com/virtux712-beep/IKUN-" target="_blank" rel="noopener">⭐ 去 GitHub 仓库看看</a>
-  </div>
-</section>
-
-<footer>
-  <div>🐔 ikun之家 · 唱、跳、RAP、篮球</div>
-  <div>练习时长两年半，仍在继续练习中</div>
-</footer>
-
-<script>
-// 跑马灯
-(function(){
-  var words = "唱跳RAP篮球 <b>◆</b> 鸡你太美 <b>◆</b> 练习时长两年半 <b>◆</b> 只因你太美 <b>◆</b> ikun之家 <b>◆</b> ";
-  document.getElementById('mq').innerHTML = words.repeat(4);
-})();
-
-// 滚动显现
-var io = new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12});
-document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
-
-// 投篮挑战
-(function(){
-  var needle=document.getElementById('needle'), fly=document.getElementById('fly'),
-      msg=document.getElementById('msg'), sc=0, sh=0, st=0, pos=0, dir=1, run=true;
-  function tick(){
-    if(run){ pos += dir*1.15; if(pos>=98){pos=98;dir=-1} if(pos<=0){pos=0;dir=1} needle.style.left=pos+'%'; }
-    requestAnimationFrame(tick);
-  }
-  tick();
-  var praises=["空心入网！这手感，两年半没白练！","正中靶心！鸡你太美！","漂亮！篮筐像装了磁铁！","进了！今晚加鸡腿！"];
-  var misses=["哐！打铁声很清脆，再来！","差一点点！就差那么一点点！","篮筐拒绝了你，但 ikun 不会！","三不沾……这球很有想法。"];
-  document.getElementById('shoot').addEventListener('click',function(){
-    if(!run) return;
-    run=false; sh++; document.getElementById('sh').textContent=sh;
-    var inZone = pos>=42 && pos<=58, center = Math.abs(pos-50);
-    if(inZone){
-      sc++; st++;
-      document.getElementById('sc').textContent=sc; document.getElementById('st').textContent=st;
-      fly.style.transform='translateY(-58px) scale(.55)'; fly.style.opacity='.25';
-      msg.textContent = (center<=3 ? "🎯 完美中心球！" : praises[Math.floor(Math.random()*praises.length)]) + (st>=3 ? "（"+st+" 连进，封神！）" : "");
-    }else{
-      st=0; document.getElementById('st').textContent=0;
-      fly.style.transform='translate('+(pos<50?-70:70)+'px,-30px) rotate(120deg)'; fly.style.opacity='.35';
-      msg.textContent = misses[Math.floor(Math.random()*misses.length)];
-    }
-    setTimeout(function(){ fly.style.transform=''; fly.style.opacity='1'; run=true; },900);
-  });
-})();
-
-// 坤坤琴键（WebAudio 五声音阶）
-(function(){
-  var ctx=null, freqs=[523.25,587.33,659.25,783.99,880.00], words=['鸡','你','太','美','哇'],
-      subs=['C5 · 开嗓','D5 · 起范','E5 · 入戏','G5 · 上头','A5 · 封神'],
-      box=document.getElementById('pads'), pads=[];
-  function ac(){ if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)(); if(ctx.state==='suspended') ctx.resume(); return ctx; }
-  function tone(f,t0,dur){
-    var a=ac(), o=a.createOscillator(), g=a.createGain(), o2=a.createOscillator(), g2=a.createGain();
-    o.type='triangle'; o.frequency.value=f; o2.type='sine'; o2.frequency.value=f*2;
-    g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(.32,t0+.02); g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-    g2.gain.setValueAtTime(0.0001,t0); g2.gain.exponentialRampToValueAtTime(.10,t0+.02); g2.gain.exponentialRampToValueAtTime(.0001,t0+dur*.7);
-    o.connect(g).connect(a.destination); o2.connect(g2).connect(a.destination);
-    o.start(t0); o.stop(t0+dur+.05); o2.start(t0); o2.stop(t0+dur+.05);
-  }
-  function hit(i){
-    tone(freqs[i], ac().currentTime, .55);
-    pads[i].classList.add('on'); setTimeout(function(){pads[i].classList.remove('on')},180);
-  }
-  words.forEach(function(w,i){
-    var d=document.createElement('div'); d.className='pad';
-    d.innerHTML='<span class="w">'+w+'</span><span class="n">'+subs[i]+'</span>';
-    d.addEventListener('click',function(){hit(i)}); box.appendChild(d); pads.push(d);
-  });
-  document.addEventListener('keydown',function(e){ var n=parseInt(e.key,10); if(n>=1&&n<=5) hit(n-1); });
-  document.getElementById('demo').addEventListener('click',function(){
-    var seq=[0,1,2,3,4,3,2,1,2,4], a=ac(), t=a.currentTime+.05;
-    seq.forEach(function(n,i){ setTimeout(function(){hit(n)}, i*230); });
-  });
-})();
-
-// 今日坤签
-(function(){
-  var list=[
-    ["大吉 · 鸡到成功","今日宜：大胆出手。投篮必进，表白必成，代码一次跑通。"],
-    ["中吉 · 稳中带皮","今日宜：低调练习。把基本功再磨两年半，好运在路上。"],
-    ["上签 · 只因你太美","今日宜：出门走走。你今天的美貌和运气，都不太讲道理。"],
-    ["吉 · 篮球入网","今日宜：运动。去投几个篮，烦恼会自己弹出去。"],
-    ["小吉 · 唱跳俱佳","今日宜：开口唱。五音不全也没关系，气势到位就是满分。"],
-    ["平签 · 贵在坚持","今日宜：躺平一会儿。练了两年半了，歇一天不算偷懒。"],
-    ["大吉 · 全场焦点","今日宜：站上 C 位。今天所有人的目光，都会只因你太美。"],
-    ["中平 · 先练基本功","今日宜：复盘。把昨天打铁的那一球，在心里重投一百遍。"]
-  ];
-  var drawn=false;
-  document.getElementById('draw').addEventListener('click',function(){
-    var f=list[Math.floor(Math.random()*list.length)];
-    document.getElementById('fbig').textContent=f[0];
-    document.getElementById('fsmall').textContent=f[1];
-    this.textContent = drawn ? '🔁 再 抽 一 签' : '🙏 再 抽 一 签'; drawn=true;
-  });
-})();
-</script>
-</body>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "IKUN之家",
+        "alternateName": "小黑子的专属精神家园",
+        "description": "图鉴、表情包、音乐、小游戏、纯度测试、留言墙，唱跳 rap 篮球一个都不能少。",
+        "inLanguage": "zh-CN"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="padding: 48px; text-align: center; color: #fff; font-family: system-ui">
+        <h1>🐔 IKUN之家</h1>
+        <p>本站需要启用 JavaScript 才能运行，请在浏览器设置中开启后刷新页面。</p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

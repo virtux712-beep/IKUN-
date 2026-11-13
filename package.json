@@ -1,0 +1,41 @@
+{
+  "name": "ikun-home",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.37.0",
+    "motion": "^14.12.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3",
+    "sonner": "^2.0.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.7",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.1.0"
+  },
+  "description": "IKUN之家 - 小黑子的专属精神家园",
+  "packageManager": "pnpm@11.28.5"
+}

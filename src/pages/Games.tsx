@@ -1,0 +1,130 @@
+import { FlaskConical, Gamepad2, Target, Zap } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import CatchBasketball from './games/CatchBasketball'
+import CatchChicken from './games/CatchChicken'
+import PurityTest from './games/PurityTest'
+import ReactionTest from './games/ReactionTest'
+
+type GameId = 'menu' | 'basketball' | 'chicken' | 'reaction' | 'purity'
+
+const GAMES: {
+  id: GameId
+  emoji: string
+  title: string
+  desc: string
+  tag: string
+  accent: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'basketball',
+    emoji: '🏀',
+    title: '接篮球',
+    desc: '左右移动接住落下的篮球，漏掉 3 个就结束',
+    tag: '操作 · 生存',
+    accent: 'from-orange-500/15 to-red-500/15',
+    icon: <Target size={18} />,
+  },
+  {
+    id: 'chicken',
+    emoji: '🐔',
+    title: '抓鸡大作战',
+    desc: '30 秒内点击尽可能多的鸡，手速决定一切',
+    tag: '手速 · 限时',
+    accent: 'from-yellow-500/15 to-amber-500/15',
+    icon: <Zap size={18} />,
+  },
+  {
+    id: 'reaction',
+    emoji: '⚡',
+    title: '小黑子反应测试',
+    desc: '屏幕变绿立刻点击，测出你的真实反应速度',
+    tag: '反应 · 评级',
+    accent: 'from-blue-500/15 to-cyan-500/15',
+    icon: <Zap size={18} />,
+  },
+  {
+    id: 'purity',
+    emoji: '🧪',
+    title: 'IKUN纯度测试',
+    desc: '15 道题，看看你是萌新还是骨灰级小黑子',
+    tag: '答题 · 称号',
+    accent: 'from-purple-500/15 to-pink-500/15',
+    icon: <FlaskConical size={18} />,
+  },
+]
+
+export default function Games() {
+  const [activeGame, setActiveGame] = useState<GameId>('menu')
+
+  const goMenu = useCallback(() => setActiveGame('menu'), [])
+
+  // 游戏内按 Esc 返回菜单
+  useEffect(() => {
+    if (activeGame === 'menu') return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') goMenu()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [activeGame, goMenu])
+
+  if (activeGame === 'basketball') return <CatchBasketball onBack={goMenu} />
+  if (activeGame === 'chicken') return <CatchChicken onBack={goMenu} />
+  if (activeGame === 'reaction') return <ReactionTest onBack={goMenu} />
+  if (activeGame === 'purity') return <PurityTest onBack={goMenu} />
+
+  return (
+    <div className="relative z-10 min-h-screen px-4 py-24">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">
+            🎮 <span className="text-ikun-yellow">小游戏</span>中心
+          </h1>
+          <p className="text-gray-400">挑战你的极限，证明你是真正的 ikun</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {GAMES.map((game) => (
+            <button
+              type="button"
+              key={game.id}
+              onClick={() => setActiveGame(game.id)}
+              className={
+                'group glass rounded-2xl p-7 text-left transition-all duration-300 ' +
+                'hover:bg-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 ' +
+                'bg-gradient-to-br cursor-pointer ' +
+                game.accent
+              }
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span
+                  className="text-5xl transition-transform duration-300 group-hover:scale-110"
+                  aria-hidden="true"
+                >
+                  {game.emoji}
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-black/30 text-gray-400">
+                  {game.icon}
+                  {game.tag}
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2 group-hover:text-ikun-yellow transition-colors">
+                {game.title}
+              </h2>
+              <p className="text-sm text-gray-400 mb-4">{game.desc}</p>
+              <span className="inline-flex items-center gap-1 text-sm text-ikun-yellow opacity-0 group-hover:opacity-100 transition-opacity">
+                开始游戏 →
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <p className="flex items-center justify-center gap-1.5 text-xs text-gray-600 mt-8">
+          <Gamepad2 size={12} aria-hidden="true" />
+          游戏内按 Esc 可返回菜单
+        </p>
+      </div>
+    </div>
+  )
+}

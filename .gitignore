@@ -1,25 +1,50 @@
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Editors
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Node (if tooling is added later)
+# ---- 依赖 ----
 node_modules/
-dist/
-.cache/
+.pnpm-store/
 
-# Logs & env
+# ---- 构建产物 ----
+dist/
+dist-ssr/
+*.local
+
+# ---- 打包/发布 ----
+*.zip
+*.tar.gz
+
+# ---- 测试与覆盖率 ----
+coverage/
+.vitest/
+*.tsbuildinfo
+
+# ---- 日志 ----
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---- 环境变量 ----
 .env
 .env.*
 !.env.example
 
-# Misc
-*.tmp
-*.bak
+# ---- 编辑器与系统 ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ---- Office 临时文件 ----
+~$*
+
+# ---- 其它 ----
+.eslintcache
+.cache/

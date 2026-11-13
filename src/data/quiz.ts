@@ -1,0 +1,118 @@
+import type { QuizQuestion } from '@/types'
+
+export const quizQuestions: QuizQuestion[] = [
+  {
+    id: 1,
+    question: '"鸡你太美"出自哪个节目？',
+    options: ['偶像练习生', '青春有你', '创造营', '快乐大本营'],
+    correctIndex: 0,
+    explanation: '这句话出自蔡徐坤在《偶像练习生》中的自我介绍视频',
+  },
+  {
+    id: 2,
+    question: '蔡徐坤的英文名是什么？',
+    options: ['Kun', 'Chris', 'IKUN', 'Cai'],
+    correctIndex: 0,
+    explanation: '蔡徐坤的英文名是Kun',
+  },
+  {
+    id: 3,
+    question: '"铁山靠"是哪个流派的招式？',
+    options: ['太极', '八极拳', '咏春', '少林'],
+    correctIndex: 1,
+    explanation: '铁山靠是八极拳中的经典招式',
+  },
+  {
+    id: 4,
+    question: '小黑子自称的"ikun"是什么意思？',
+    options: ['蔡徐坤的粉丝', '我是坤坤的黑粉', 'i+坤，表示对坤坤的喜爱', '一种网络暗号'],
+    correctIndex: 2,
+    explanation: 'ikun = i + kun，表示"我是坤坤"的意思',
+  },
+  {
+    id: 5,
+    question: '"你干嘛~哎呦"这个梗的来源？',
+    options: ['综艺节目', '演唱会', '日常vlog', '综艺节目中的片段'],
+    correctIndex: 3,
+    explanation: '出自蔡徐坤在综艺节目中的片段，因其语气和表情而走红',
+  },
+  {
+    id: 6,
+    question: '以下哪个不是蔡徐坤的技能？',
+    options: ['唱歌', '跳舞', 'rap', '魔术'],
+    correctIndex: 3,
+    explanation: '蔡徐坤的特长是唱跳rap和打篮球，不包括魔术',
+  },
+  {
+    id: 7,
+    question: '"练习时长两年半"指的是什么？',
+    options: ['学习时间', '练习生时期', '出道时间', '训练时长'],
+    correctIndex: 1,
+    explanation: '蔡徐坤在自我介绍时说自己做了两年半的练习生',
+  },
+  {
+    id: 8,
+    question: '小黑子们的经典手势是？',
+    options: ['比心', '剪刀手', 'ikun手势', 'OK手势'],
+    correctIndex: 2,
+    explanation: 'ikun手势是小黑子之间互相识别的暗号',
+  },
+  {
+    id: 9,
+    question: '"荔枝"谐音什么？',
+    options: ['梨子', '理智', '栗子', '梨汁'],
+    correctIndex: 1,
+    explanation: '荔枝 = 理智，说话要理智就是"说荔枝"',
+  },
+  {
+    id: 10,
+    question: '以下哪个是ikun社区的正确用语？',
+    options: ['666', '小黑子', 'ikun', '以上都是'],
+    correctIndex: 3,
+    explanation: '这些都是ikun社区的常用语',
+  },
+  {
+    id: 11,
+    question: '蔡徐坤打篮球的经典BGM是？',
+    options: ['鸡你太美', '只因你太美', '小星星', '月亮代表我的心'],
+    correctIndex: 1,
+    explanation: '蔡徐坤打篮球时的BGM是《只因你太美》',
+  },
+  {
+    id: 12,
+    question: '"基尼太美"表达了什么？',
+    options: ['对时尚的追求', '对美的感叹', '体重管理', '对衣服的评价'],
+    correctIndex: 1,
+    explanation: '基尼太美是"鸡你太美"的变体，表达对美的感叹',
+  },
+  {
+    id: 13,
+    question: 'ikun的标志颜色是？',
+    options: ['红色', '蓝色', '黄色', '绿色'],
+    correctIndex: 2,
+    explanation: '黄色是ikun的代表色',
+  },
+  {
+    id: 14,
+    question: '"小黑子"这个称呼的含义是？',
+    options: ['真的讨厌坤坤', '以黑为乐的ikun', '不爱干净的人', '肤色较深的人'],
+    correctIndex: 1,
+    explanation: '小黑子是ikun社区的自称，以黑为乐，是一种幽默的表达方式',
+  },
+  {
+    id: 15,
+    question: '以下哪个是ikun社区的"入会暗号"？',
+    options: ['你好', 'ikun', '你干嘛', '鸡你太美'],
+    correctIndex: 2,
+    explanation: '"你干嘛~哎呦"是小黑子之间最常见的接头暗号',
+  },
+]
+
+export const purityLevels = [
+  { min: 0, max: 20, level: '路过的路人', comment: '你对ikun文化一窍不通，建议从头学习！📚' },
+  { min: 21, max: 40, level: '小萌新', comment: '你刚踏入ikun世界，还有很多需要探索！🌱' },
+  { min: 41, max: 60, level: '初级小黑子', comment: '你已经入门了，但距离真正的ikun还有距离！🐣' },
+  { min: 61, max: 80, level: '资深小黑子', comment: '你是ikun社区的中坚力量，继续保持！💪' },
+  { min: 81, max: 95, level: '骨灰级ikun', comment: '你是真正的ikun大师，没有什么梗能难倒你！🏆' },
+  { min: 96, max: 100, level: 'ikun之神', comment: '你就是ikun文化的化身，封神！👑✨' },
+]

@@ -1,0 +1,503 @@
+@import "tailwindcss";
+
+@theme {
+  /* 优先使用系统字体，避免依赖外部字体 CDN（国内访问不稳定，且会阻塞首屏渲染） */
+  --font-sans: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC",
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --color-ikun-black: #0a0a0a;
+  --color-ikun-dark: #141414;
+  --color-ikun-card: #1a1a1a;
+  --color-ikun-yellow: #ffd700;
+  --color-ikun-gold: #f5c842;
+  --color-ikun-golden: #daa520;
+  --color-ikun-white: #ffffff;
+  --color-ikun-gray: #888888;
+  --color-ikun-light: #2a2a2a;
+  --color-ikun-border: #333333;
+  --color-ikun-glass: rgba(255, 255, 255, 0.05);
+  --color-ikun-glass-border: rgba(255, 255, 255, 0.1);
+  --color-ikun-glass-hover: rgba(255, 255, 255, 0.1);
+
+  --animate-fade-up: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-scale-in: scaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-slide-down: slideDown 0.3s ease-out forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin-slow 20s linear infinite;
+  --animate-glow: glow 2s ease-in-out infinite;
+}
+
+:root {
+  color-scheme: dark;
+  --nav-height: 4rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-ikun-black);
+  color: var(--color-ikun-white);
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 输入框在 iOS 上字号小于 16px 会触发自动放大 */
+@media (max-width: 640px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+::selection {
+  background: rgba(255, 215, 0, 0.3);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------- */
+/* 焦点可见性：键盘用户必须能看清当前焦点                            */
+/* ---------------------------------------------------------------- */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ikun-yellow);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------- */
+/* 滚动条                                                            */
+/* ---------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ikun-black);
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+  border: 2px solid var(--color-ikun-black);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ikun-yellow);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a var(--color-ikun-black);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ---------------------------------------------------------------- */
+/* 毛玻璃                                                            */
+/* ---------------------------------------------------------------- */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* 不支持 backdrop-filter 的浏览器退回不透明背景 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: rgba(26, 26, 26, 0.95);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* 动画                                                              */
+/* ---------------------------------------------------------------- */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(3deg);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out forwards;
+}
+.animate-popIn {
+  animation: pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-pulse-custom {
+  animation: pulse 2s infinite;
+}
+.animate-bounce-custom {
+  animation: bounce 2s infinite;
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* 子元素依次入场 */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.stagger-children > *:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.stagger-children > *:nth-child(8) {
+  animation-delay: 0.4s;
+}
+
+/* ---------------------------------------------------------------- */
+/* 滑块                                                              */
+/* ---------------------------------------------------------------- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #333;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--color-ikun-yellow);
+  transition: transform 0.15s ease;
+}
+input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #333;
+}
+input[type="range"]::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: var(--color-ikun-yellow);
+  border: none;
+}
+
+/* ---------------------------------------------------------------- */
+/* 工具类                                                            */
+/* ---------------------------------------------------------------- */
+.tooltip {
+  position: relative;
+}
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: #2a2a2a;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 60;
+}
+.tooltip:hover::after,
+.tooltip:focus-visible::after {
+  opacity: 1;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(100deg, #ffe066 0%, #ffd700 35%, #f5c842 60%, #daa520 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.mask-fade-b {
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------- */
+/* 无障碍：尊重系统「减少动态效果」设置                               */
+/* ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .stagger-children > * {
+    opacity: 1 !important;
+  }
+}
+
+/* 打印时去掉背景与动画 */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+/* ---------------------------------------------------------------- */
+/* cmdk 命令面板（Radix Dialog 底座）                                */
+/* ---------------------------------------------------------------- */
+[cmdk-overlay] {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.18s ease-out;
+}
+
+[cmdk-dialog] {
+  position: fixed;
+  top: 12vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: min(36rem, calc(100vw - 2rem));
+  z-index: 91;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 20, 20, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  animation: pop-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[cmdk-input] {
+  border: none;
+  outline: none;
+}
+
+[cmdk-item] {
+  user-select: none;
+}
+
+[cmdk-group-heading] {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* sonner 提示条：与站点玻璃风格对齐 */
+[data-sonner-toaster] {
+  font-family: var(--font-sans);
+}
