@@ -27,13 +27,13 @@
   "devDependencies": {
     "@biomejs/biome": "^2.6.7",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
-    "vite": "^8.2.2",
+    "vite": "^8.3.7",
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.1.0"
   },
