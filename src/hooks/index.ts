@@ -217,3 +217,66 @@ export function generateId(): string {
 export function formatNumber(value: number): string {
   return value.toLocaleString('zh-CN')
 }
+
+/**
+ * WebAudio 合成音色：三角波基音 + 正弦泛音的双振荡器，
+ * 无需任何音频资源即可发声，供「坤坤琴键」等乐器小玩具使用。
+ * AudioContext 懒创建并复用，组件卸载时关闭。
+ */
+export function useSynth(): { playTone: (frequency: number, duration?: number) => void } {
+  const ctxRef = useRef<AudioContext | null>(null)
+
+  useEffect(() => {
+    return () => {
+      const ctx = ctxRef.current
+      ctxRef.current = null
+      if (ctx) void ctx.close().catch(() => undefined)
+    }
+  }, [])
+
+  const getContext = useCallback((): AudioContext | null => {
+    if (typeof window === 'undefined') return null
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    if (!Ctor) return null
+    if (!ctxRef.current) ctxRef.current = new Ctor()
+    if (ctxRef.current.state === 'suspended') void ctxRef.current.resume()
+    return ctxRef.current
+  }, [])
+
+  const playTone = useCallback(
+    (frequency: number, duration = 0.55) => {
+      const ctx = getContext()
+      if (!ctx) return
+      const t0 = ctx.currentTime
+
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'triangle'
+      osc.frequency.value = frequency
+      gain.gain.setValueAtTime(0.0001, t0)
+      gain.gain.exponentialRampToValueAtTime(0.32, t0 + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(t0)
+      osc.stop(t0 + duration + 0.05)
+
+      const harmonic = ctx.createOscillator()
+      const harmonicGain = ctx.createGain()
+      harmonic.type = 'sine'
+      harmonic.frequency.value = frequency * 2
+      harmonicGain.gain.setValueAtTime(0.0001, t0)
+      harmonicGain.gain.exponentialRampToValueAtTime(0.1, t0 + 0.02)
+      harmonicGain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration * 0.7)
+      harmonic.connect(harmonicGain)
+      harmonicGain.connect(ctx.destination)
+      harmonic.start(t0)
+      harmonic.stop(t0 + duration + 0.05)
+    },
+    [getContext],
+  )
+
+  return { playTone }
+}

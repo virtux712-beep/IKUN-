@@ -1,11 +1,22 @@
-import { FlaskConical, Gamepad2, Target, Zap } from 'lucide-react'
+import { Crosshair, FlaskConical, Gamepad2, Music, Sparkles, Target, Zap } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import CatchBasketball from './games/CatchBasketball'
 import CatchChicken from './games/CatchChicken'
+import FortuneDraw from './games/FortuneDraw'
+import KunPiano from './games/KunPiano'
 import PurityTest from './games/PurityTest'
 import ReactionTest from './games/ReactionTest'
+import ShootingChallenge from './games/ShootingChallenge'
 
-type GameId = 'menu' | 'basketball' | 'chicken' | 'reaction' | 'purity'
+type GameId =
+  | 'menu'
+  | 'basketball'
+  | 'chicken'
+  | 'reaction'
+  | 'purity'
+  | 'shooting'
+  | 'piano'
+  | 'fortune'
 
 const GAMES: {
   id: GameId
@@ -52,6 +63,33 @@ const GAMES: {
     accent: 'from-purple-500/15 to-pink-500/15',
     icon: <FlaskConical size={18} />,
   },
+  {
+    id: 'shooting',
+    emoji: '🎯',
+    title: '投篮挑战',
+    desc: '跑针停进绿色区就进球，越靠近中心评价越高',
+    tag: '时机 · 手感',
+    accent: 'from-green-500/15 to-emerald-500/15',
+    icon: <Crosshair size={18} />,
+  },
+  {
+    id: 'piano',
+    emoji: '🎹',
+    title: '坤坤琴键',
+    desc: '五声音阶的五个键，怎么乱弹都不难听',
+    tag: '音乐 · 弹奏',
+    accent: 'from-pink-500/15 to-rose-500/15',
+    icon: <Music size={18} />,
+  },
+  {
+    id: 'fortune',
+    emoji: '🔮',
+    title: '今日坤签',
+    desc: '进门先抽一签，看看今天宜干什么',
+    tag: '每日 · 玄学',
+    accent: 'from-amber-500/15 to-yellow-500/15',
+    icon: <Sparkles size={18} />,
+  },
 ]
 
 export default function Games() {
@@ -73,6 +111,9 @@ export default function Games() {
   if (activeGame === 'chicken') return <CatchChicken onBack={goMenu} />
   if (activeGame === 'reaction') return <ReactionTest onBack={goMenu} />
   if (activeGame === 'purity') return <PurityTest onBack={goMenu} />
+  if (activeGame === 'shooting') return <ShootingChallenge onBack={goMenu} />
+  if (activeGame === 'piano') return <KunPiano onBack={goMenu} />
+  if (activeGame === 'fortune') return <FortuneDraw onBack={goMenu} />
 
   return (
     <div className="relative z-10 min-h-screen px-4 py-24">

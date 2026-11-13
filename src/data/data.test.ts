@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { characters, rarityColors, rarityLabels } from '@/data/characters'
+import { FORTUNES, pickFortune } from '@/data/fortunes'
 import { memeCategories, memes } from '@/data/memes'
 import { playlist } from '@/data/music'
 import { purityLevels, quizQuestions } from '@/data/quiz'
@@ -85,6 +86,23 @@ describe('题库数据', () => {
       const hit = purityLevels.filter((l) => score >= l.min && score <= l.max)
       expect(hit).toHaveLength(1)
     }
+  })
+})
+
+describe('今日坤签数据', () => {
+  it('共 8 支签，标题唯一且签文完整', () => {
+    expect(FORTUNES).toHaveLength(8)
+    const titles = FORTUNES.map((f) => f.title)
+    expect(new Set(titles).size).toBe(titles.length)
+    for (const f of FORTUNES) {
+      expect(f.title.length).toBeGreaterThan(0)
+      expect(f.text.length).toBeGreaterThan(10)
+    }
+  })
+
+  it('pickFortune 按随机数命中首尾签', () => {
+    expect(pickFortune(() => 0)).toBe(FORTUNES[0])
+    expect(pickFortune(() => 0.999999)).toBe(FORTUNES[FORTUNES.length - 1])
   })
 })
 

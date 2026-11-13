@@ -202,7 +202,7 @@ const FEATURES: {
   {
     emoji: '🎮',
     title: '小游戏',
-    desc: '接篮球、抓鸡、反应测试等你来挑战',
+    desc: '接篮球、投篮挑战、坤坤琴键、今日坤签等你来玩',
     tab: 'games',
     gradient: 'from-orange-500/15 to-red-500/15',
   },
