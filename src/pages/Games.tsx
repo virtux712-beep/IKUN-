@@ -1,11 +1,23 @@
-import { Crosshair, FlaskConical, Gamepad2, Music, Sparkles, Target, Zap } from 'lucide-react'
+import {
+  Crosshair,
+  FlaskConical,
+  Gamepad2,
+  Layers,
+  Music,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Zap,
+} from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useAchievements } from '@/achievements'
 import SectionHeader from '@/components/SectionHeader'
 import CatchBasketball from './games/CatchBasketball'
 import CatchChicken from './games/CatchChicken'
 import FortuneDraw from './games/FortuneDraw'
+import IdleNest from './games/IdleNest'
 import KunPiano from './games/KunPiano'
+import MergeChicken from './games/MergeChicken'
 import PurityTest from './games/PurityTest'
 import ReactionTest from './games/ReactionTest'
 import ShootingChallenge from './games/ShootingChallenge'
@@ -19,6 +31,8 @@ type GameId =
   | 'shooting'
   | 'piano'
   | 'fortune'
+  | 'merge'
+  | 'idle'
 
 const GAMES: {
   id: GameId
@@ -92,6 +106,24 @@ const GAMES: {
     accent: 'from-amber-500/15 to-yellow-500/15',
     icon: <Sparkles size={18} />,
   },
+  {
+    id: 'merge',
+    emoji: '🧬',
+    title: '只因合成',
+    desc: '滑动合并同级单位，从 🐣 一路合成到 👑 只因之神',
+    tag: '合并 · 刷分',
+    accent: 'from-teal-500/15 to-emerald-500/15',
+    icon: <Layers size={18} />,
+  },
+  {
+    id: 'idle',
+    emoji: '🏡',
+    title: '鸡窝放置',
+    desc: '买设施自动产出只因值，离线也能攒，最高 8 小时',
+    tag: '放置 · 挂机',
+    accent: 'from-yellow-500/15 to-orange-500/15',
+    icon: <TrendingUp size={18} />,
+  },
 ]
 
 export default function Games() {
@@ -125,6 +157,8 @@ export default function Games() {
   if (activeGame === 'shooting') return <ShootingChallenge onBack={goMenu} />
   if (activeGame === 'piano') return <KunPiano onBack={goMenu} />
   if (activeGame === 'fortune') return <FortuneDraw onBack={goMenu} />
+  if (activeGame === 'merge') return <MergeChicken onBack={goMenu} />
+  if (activeGame === 'idle') return <IdleNest onBack={goMenu} />
 
   return (
     <div className="relative z-10 min-h-screen pt-24 pb-20">
@@ -133,7 +167,7 @@ export default function Games() {
           index="06"
           eyebrow="小游戏中心"
           title="挑战你的极限"
-          description="接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签——七款小游戏，最高分与最佳纪录本地保存。"
+          description="九款小游戏：接篮球、抓鸡、反应测试、纯度测试、投篮挑战、坤坤琴键、今日坤签、只因合成、鸡窝放置。全部纯前端实现，进度本地保存。"
           className="mb-12"
         />
 

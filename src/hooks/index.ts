@@ -96,7 +96,10 @@ export function useAnimatedNumber(target: number, duration = 2000, start = true)
   return value
 }
 
-export function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
+/** 支持函数式更新的 localStorage setter（与 React setState 一致） */
+export type LocalStorageSetter<T> = (value: T | ((prev: T) => T)) => void
+
+export function useLocalStorage<T>(key: string, defaultValue: T): [T, LocalStorageSetter<T>] {
   const [value, setValue] = useState<T>(() => {
     try {
       const stored = localStorage.getItem(key)
@@ -106,14 +109,17 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T)
     }
   })
 
-  const setStoredValue = useCallback(
-    (newValue: T) => {
-      setValue(newValue)
-      try {
-        localStorage.setItem(key, JSON.stringify(newValue))
-      } catch {
-        /* 忽略写入失败 */
-      }
+  const setStoredValue = useCallback<LocalStorageSetter<T>>(
+    (newValue) => {
+      setValue((prev) => {
+        const next = typeof newValue === 'function' ? (newValue as (p: T) => T)(prev) : newValue
+        try {
+          localStorage.setItem(key, JSON.stringify(next))
+        } catch {
+          /* 忽略写入失败 */
+        }
+        return next
+      })
     },
     [key],
   )

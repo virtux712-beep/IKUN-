@@ -49,3 +49,5 @@ Thumbs.db
 # ---- 其它 ----
 .eslintcache
 .cache/
+# 临时输出
+*.out

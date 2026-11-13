@@ -9,6 +9,37 @@
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/) 与
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 规范。
 
+## [2.1.0] - 小游戏扩充与手感升级
+
+参考 GitHub 热门小游戏品类（2048 合并系、A Dark Room 放置系、shapez.io 反馈设计），新增两款游戏并建立共享手感层。
+
+### 新增
+
+- 🧬 **只因合成**（`games/MergeChicken.tsx` + `games/merge.ts`）
+  - 2048 合并机制：4×4 棋盘，方向键 / WASD / 触摸滑动
+  - 八级合并链：🐣 小鸡 → 🐔 鸡 → 🐓 公鸡 → 🥚 蛋 → 🍗 鸡腿 → 🏀 篮球 → 🎤 麦克风 → 👑 只因之神
+  - 合并逻辑抽为纯函数模块（`slide` / `spawn` / `isDead`），配 8 个单元测试
+  - 最高级不可再合并；死局自动判定并结算最高分
+- 🏡 **鸡窝放置**（`games/IdleNest.tsx`）
+  - 增量 / 放置玩法：5 种设施自动产出「只因值」，成本按 1.15 指数增长
+  - **离线收益**：离开期间按最后在线时间补算，上限 8 小时
+  - 点击额外获得「每秒产出 × 10%」，设施越多点得越值
+  - 存档持久化到 localStorage，可一键重置
+- ✨ **共享手感层**（`games/juice.tsx`）
+  - `useJuice()`：`shake()` 屏幕抖动 / `burst()` emoji 粒子 / `popText()` 浮动文字
+  - `JuiceLayer` 粒子渲染组件、`shortNum()` 数值缩写（1.2K / 3.4M / 5.6B）
+  - 新增 CSS 动画：`juice-fly` / `juice-pop` / `shake`
+
+### 优化
+
+- `useLocalStorage` setter 支持函数式更新（`setSave(prev => ...)`），与 React setState 语义一致，向后兼容
+
+### 变更
+
+- 小游戏中心由 7 款增至 **9 款**
+- 单元测试 44 → **52**（新增只因合成 8 个）
+- 版本号 2.0.4 → 2.1.0
+
 ## [2.0.4] - TypeScript 7 升级
 
 清单 D 组遗留项：验证 TypeScript 7 兼容性并落地。
