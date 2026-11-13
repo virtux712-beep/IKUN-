@@ -8,6 +8,9 @@
 
 React 19 + TypeScript + Vite 8 + Tailwind CSS 4 构建的深色玻璃拟态单页应用。离线可用（PWA）、可安装、带单元测试与 CI 级代码检查。
 
+🌐 **线上演示**：[ikunzhijia.byethost5.com](http://ikunzhijia.byethost5.com/) · [GitHub Pages 镜像](https://virtux712-beep.github.io/IKUN-/)
+📦 **最新发行版**：[v1.1.0](https://github.com/virtux712-beep/IKUN-/releases/tag/v1.1.0)（更新日志见 [CHANGELOG.md](./CHANGELOG.md)）
+
 ---
 
 ## 🚀 快速开始
@@ -27,12 +30,11 @@ pnpm lint:fix       # 自动修复
 
 仓库已内置 `.github/workflows/deploy.yml`，推到 `main` 就会自动构建并发布。
 
-首次使用需要在 GitHub 上做两件事：
+本仓库已启用 Pages（Settings → Pages → Source 选择 **GitHub Actions**），推送 `main` 后自动构建发布：
 
-1. **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**
-2. 把本 README 顶部徽章里的 `USERNAME` 换成你的 GitHub 用户名（可选，只是徽章链接）
+👉 **https://virtux712-beep.github.io/IKUN-/**
 
-之后访问 `https://<用户名>.github.io/<仓库名>/` 即可。
+（Fork 本仓库自部署时，把上面链接换成你自己的用户名与仓库名即可。）
 
 > 项目使用 **hash 路由**（`#/memes`）且 `base: './'`，所以部署在任意子路径下都不会白屏，无需额外配置 404 回退。
 
@@ -57,8 +59,8 @@ docker run -d -p 3000:80 ikun-home
 | 动画 | **motion** (Framer Motion) | 3380 万 | 手写 CSS keyframes | `AnimatePresence` 支持**退出动画**（CSS 做不到）、弹簧物理过渡、`useReducedMotion` 无障碍 |
 | 轻提示 | **sonner** | 5737 万 | 手写 Toast 组件（约 120 行） | 自动堆叠、关闭按钮、aria-live、Promise 态 |
 | 命令面板 | **cmdk** | 4671 万 | 手写键盘导航（约 180 行） | 基于 Radix Dialog：**焦点陷阱 / Esc / 滚动锁定 / 模糊匹配**开箱即用 |
-| 离线与安装 | **vite-plugin-pwa** | 736 万 | 无 | Service Worker 预缓存 33 个资源，断网可用、可添加到桌面、自动更新 |
-| 单元测试 | **vitest** | 1.79 亿 | 无 | 25 个测试覆盖存储层与数据完整性 |
+| 离线与安装 | **vite-plugin-pwa** | 736 万 | 无 | Service Worker 预缓存 30 个资源，断网可用、可添加到桌面、自动更新 |
+| 单元测试 | **vitest** | 1.79 亿 | 无 | 27 个测试覆盖存储层、数据完整性与坤签数据 |
 | Lint + 格式 | **Biome** | 2646 万 | oxlint（仅 lint） | 一个工具同时管 lint 与格式化，比 ESLint+Prettier 快一个数量级 |
 
 **没有采纳的**：`zustand`（9112 万下载）——本项目状态只有「当前标签页」一层，用 props 传递比引入全局 store 更简单，属于过度设计。
@@ -92,6 +94,9 @@ docker run -d -p 3000:80 ikun-home
 | 🐔 抓鸡 | Pointer Events 统一鼠标/触摸，递归定时器随分数加速 |
 | ⚡ 反应测试 | 定时器完整生命周期，抢跑判定，S~D 评级 |
 | 🧪 纯度测试 | 15 题，SVG 环形进度条出分 |
+| 🎯 投篮挑战 | rAF + delta 时间跑针（帧率无关），绿区 / 完美球判定，最佳连进 localStorage 持久化，空格出手 |
+| 🎹 坤坤琴键 | WebAudio 双振荡器合成音色（零音频资源），五声音阶五键，键盘 1–5 + 示范弹奏 |
+| 🔮 今日坤签 | 8 支签文数据与逻辑分离（可注入随机源，已单测），连抽同签自动顺延，aria-live 播报 |
 
 ### 💬 留言墙
 发布 / 点赞 / 8 种表情反应 / 评论，昵称记忆，选择器点击外部关闭，中文输入法回车不误触发。
@@ -121,9 +126,14 @@ docker run -d -p 3000:80 ikun-home
 - motion 页面转场 + 弹层退出动画
 - sonner 替换手写 Toast，cmdk 替换手写命令面板
 - PWA：Service Worker 预缓存、可安装、离线可用、自动更新
-- Vitest 25 个单元测试（存储层 + 数据完整性 + 类型守卫）
+- Vitest 27 个单元测试（存储层 + 数据完整性 + 坤签数据）
 - Biome 统一 lint 与格式化，**0 error 0 warning**
 - 按 vendor 拆包：`react-vendor` / `motion-vendor` / `ui-vendor`，发版只失效业务代码
+
+### 第三轮：内容扩展（v1.1.0，2026-11-13）
+- 小游戏中心 +3：投篮挑战、坤坤琴键、今日坤签（原型为单页小游戏，移植为 React 组件并入发行版）
+- 坤签数据抽为 `src/data/fortunes.ts` 并补单元测试（25 → 27 个）
+- 线上演示站同步升级 v1.1.0；GitHub Pages 镜像启用
 
 ### ♿️ 无障碍
 - 全站 `type="button"`、`:focus-visible` 焦点环、跳过导航链接
@@ -135,7 +145,7 @@ docker run -d -p 3000:80 ikun-home
 ### 🔧 工程化
 - TypeScript `strict` + `noImplicitOverride`
 - Biome 同时承担 lint 与格式化（替代 oxlint）
-- Vitest + 25 个测试
+- Vitest + 27 个测试
 - Dockerfile 改用 pnpm + `--frozen-lockfile`，修复健康检查缺 `curl` 的问题
 - nginx：HTML 不缓存 / 静态资源 immutable、CSP 等安全头
 - 补齐 `robots.txt`、`sitemap.xml`、OG/Twitter 卡片、JSON-LD
@@ -145,17 +155,17 @@ docker run -d -p 3000:80 ikun-home
 ## 📊 产物体积
 
 ```
-react-vendor   79.2 kB gz   React 运行时（长缓存）
-motion-vendor  34.6 kB gz   动画引擎（长缓存）
-ui-vendor       9.1 kB gz   sonner + cmdk + Radix Dialog
-index           9.0 kB gz   业务代码
-index.css      11.5 kB gz   Tailwind + 自定义样式
-其他页面 chunk  0.8 ~ 8.5 kB gz   按需加载
+react-vendor  121.4 kB gz   React 运行时（长缓存）
+index.css      11.9 kB gz   Tailwind + 自定义样式
+Games          11.8 kB gz   小游戏中心（7 款游戏，按需加载）
+index           9.3 kB gz   业务代码
+vendor          5.1 kB gz   motion / sonner / cmdk 等第三方库
+其他页面 chunk  0.8 ~ 3.5 kB gz   按需加载
 ```
 
-首屏约 **148 kB gz**，PWA 预缓存后二次访问接近 0 请求。
+（v1.1.0 生产构建实测，gzip 后大小。）
 
-> 💡 如果只需要淡入淡出、不想要退出动画，可以把 motion 换成浏览器原生 **View Transitions API**，能省下 34.6 kB gz。
+首屏约 **148 kB gz**，PWA 预缓存后二次访问接近 0 请求。
 
 ---
 
@@ -169,7 +179,8 @@ ikun-home/
 │   │   └── deploy.yml            # 自动发布到 GitHub Pages
 │   └── dependabot.yml            # 依赖自动升级
 ├── docs/
-│   └── IKUN之家-运行教程.docx
+│   ├── IKUN之家-运行教程.docx
+│   └── IKUN之家-运行教程.md            # 同上（Markdown 版）
 ├── public/
 │   ├── favicon.svg
 │   ├── pwa-192x192.png / pwa-512x512.png / pwa-maskable-512x512.png
@@ -190,7 +201,7 @@ ikun-home/
 │   ├── pages/
 │   │   ├── Home.tsx / Encyclopedia.tsx / MemeCenter.tsx
 │   │   ├── MusicPlayer.tsx / Games.tsx / MessageBoard.tsx / Search.tsx
-│   │   └── games/{CatchBasketball,CatchChicken,ReactionTest,PurityTest}.tsx
+│   │   └── games/{CatchBasketball,CatchChicken,ReactionTest,PurityTest,ShootingChallenge,KunPiano,FortuneDraw}.tsx
 │   ├── data/                     # 角色 / 表情包 / 音乐 / 题库
 │   ├── store/                    # LocalStorage 封装（+ 单元测试）
 │   ├── hooks/                    # useHotkey / useOnClickOutside / ...
