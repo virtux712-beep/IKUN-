@@ -25,17 +25,17 @@
     "sonner": "^2.0.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.7",
+    "@biomejs/biome": "^2.6.8",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
-    "vite": "^8.2.2",
+    "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "description": "IKUN之家 - 小黑子的专属精神家园",
   "packageManager": "pnpm@11.28.5"
